@@ -14,14 +14,14 @@ if [[ $source_kind == download ]]; then
   input="$tmp/download"
 fi
 [[ -d $input ]] || die 'input directory does not exist'
-mkdir -p "$tmp/unpacked" "$output"
+mkdir -p "$tmp/unpacked" "$tmp/selected" "$output"
 [[ -z $(find "$output" -mindepth 1 -print -quit) ]] || die 'output must be empty'
 # Extract only regular distribution files, never links or arbitrary archive paths.
 python3 "$(dirname "$0")/extract.py" "$input" "$tmp/unpacked"
 if [[ $format == run ]]; then
   mapfile -d '' files < <(find "$tmp/unpacked" -type f -name "setup-full-$version-x86_64.run" -print0)
   [[ ${#files[@]} == 1 ]] || die 'expected exactly one matching full RUN installer'
-  cp "${files[0]}" "$output/"
+  cp "${files[0]}" "$tmp/selected/"
 else
   components=(common server)
   [[ $image != onec-test ]] || components+=(client)
@@ -35,6 +35,7 @@ else
       selected+=("$file")
     done < <(find "$tmp/unpacked" -type f -name '*.deb' -print0)
     [[ ${#selected[@]} == 1 ]] || die "expected exactly one $component package for $version"
-    cp "${selected[0]}" "$output/"
+    cp "${selected[0]}" "$tmp/selected/"
   done
 fi
+cp "$tmp/selected/"* "$output/"

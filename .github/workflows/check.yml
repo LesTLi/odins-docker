@@ -11,6 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Shell syntax
-        run: find . -name '*.sh' -type f -exec bash -n {} +
+        run: find scripts tests -name '*.sh' -type f -exec bash -n {} \;
       - name: Input behavior
         run: bash tests/test-inputs.sh
+      - name: ShellCheck
+        run: shellcheck -x scripts/*.sh scripts/nircmd tests/*.sh
+      - name: Dockerfile lint
+        run: |
+          docker run --rm -i hadolint/hadolint:2.12.0 < server/Dockerfile
+          docker run --rm -i hadolint/hadolint:2.12.0 < onec-test/Dockerfile
+      - name: Workflow lint
+        run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+          "$(go env GOPATH)/bin/actionlint"

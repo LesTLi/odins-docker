@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1.7
 ARG BASE_IMAGE=ubuntu:22.04
+ARG DIST_SOURCE=local
 FROM ${BASE_IMAGE} AS downloader
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY scripts/ /build/scripts/
@@ -24,7 +25,6 @@ RUN --mount=type=bind,source=distr,target=/input \
 
 FROM downloader AS source-download
 FROM local AS source-local
-ARG DIST_SOURCE=local
 FROM source-${DIST_SOURCE} AS distribution
 FROM scratch AS distribution-export
 COPY --from=distribution /distribution/ /
