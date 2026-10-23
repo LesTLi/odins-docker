@@ -1,0 +1,6 @@
+distr/*
+!distr/.gitkeep
+.env
+.secrets/
+.superpowers/
+__pycache__/
