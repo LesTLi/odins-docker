@@ -1,0 +1,58 @@
+# syntax=docker/dockerfile:1.7
+ARG BASE_IMAGE=ubuntu:22.04
+FROM ${BASE_IMAGE} AS downloader
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+COPY scripts/ /build/scripts/
+COPY versions.env /build/versions.env
+RUN apt-get update && apt-get install -y --no-install-recommends python3 unzip p7zip-full \
+    && bash /build/scripts/install-tools.sh downloader \
+    && rm -rf /var/lib/apt/lists/*
+ARG ONEC_VERSION=8.3.27.2130
+ARG INSTALL_FORMAT=deb
+RUN --mount=type=secret,id=onec_username,required=true \
+    --mount=type=secret,id=onec_password,required=true \
+    bash /build/scripts/acquire.sh download "$INSTALL_FORMAT" server "$ONEC_VERSION" /unused /distribution
+
+FROM ${BASE_IMAGE} AS local
+COPY scripts/ /build/scripts/
+RUN apt-get update && apt-get install -y --no-install-recommends python3 ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+ARG ONEC_VERSION=8.3.27.2130
+ARG INSTALL_FORMAT=deb
+RUN --mount=type=bind,source=distr,target=/input \
+    bash /build/scripts/acquire.sh local "$INSTALL_FORMAT" server "$ONEC_VERSION" /input /distribution
+
+FROM downloader AS source-download
+FROM local AS source-local
+ARG DIST_SOURCE=local
+FROM source-${DIST_SOURCE} AS distribution
+FROM scratch AS distribution-export
+COPY --from=distribution /distribution/ /
+
+FROM ${BASE_IMAGE} AS tools
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+COPY scripts/ /build/scripts/
+COPY versions.env /build/versions.env
+RUN bash /build/scripts/install-deps.sh common \
+    && groupadd --gid 10001 onec \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /bin/bash onec \
+    && mkdir /workspace && chown onec:onec /workspace
+COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/onec-entrypoint
+ENV LANG=ru_RU.UTF-8 LC_ALL=ru_RU.UTF-8 TZ=Asia/Novosibirsk \
+    HOME=/home/onec ONEC_IMAGE=server
+WORKDIR /workspace
+ENTRYPOINT ["/usr/bin/tini", "-g", "--", "/usr/local/bin/onec-entrypoint"]
+USER 10001:10001
+CMD ["bash"]
+
+FROM tools AS runtime
+USER root
+ARG ONEC_VERSION=8.3.27.2130
+ARG INSTALL_FORMAT=deb
+RUN --mount=type=bind,from=distribution,source=/distribution,target=/distribution \
+    bash /build/scripts/install-platform.sh "$INSTALL_FORMAT" server "$ONEC_VERSION" /distribution \
+    && rm -rf /build
+LABEL org.opencontainers.image.title="odins-docker server" \
+      org.opencontainers.image.version=${ONEC_VERSION}
+USER 10001:10001
+CMD ["ibcmd", "--help"]

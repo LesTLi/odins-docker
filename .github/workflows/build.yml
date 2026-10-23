@@ -1,0 +1,61 @@
+name: Build and test
+on:
+  push:
+    branches: [main, feat/images-actions]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 1C platform version
+        default: '8.3.27.2130'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tools:
+    name: Tools / ${{ matrix.image }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [server, onec-test]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+      - name: Build dependencies without proprietary distribution
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: docker buildx build --load --target tools -f "$IMAGE/Dockerfile" -t "tools:$IMAGE" .
+      - name: Non-root runtime checks
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: bash tests/smoke.sh "tools:$IMAGE" "$IMAGE" tools
+  images:
+    name: Platform / ${{ matrix.image }} / ${{ matrix.format }}
+    needs: tools
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [server, onec-test]
+        format: [deb, run]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
+      - name: Build and test both sources
+        env:
+          ONEC_USERNAME: ${{ secrets.ONEC_USERNAME }}
+          ONEC_PASSWORD: ${{ secrets.ONEC_PASSWORD }}
+          ONEC_VERSION: ${{ inputs.version || '8.3.27.2130' }}
+          INSTALL_FORMAT: ${{ matrix.format }}
+          IMAGE: ${{ matrix.image }}
+        run: bash scripts/ci-build-test.sh "$IMAGE"
