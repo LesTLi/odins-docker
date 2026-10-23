@@ -36,7 +36,8 @@ done
 if [[ -z $(find "$output" -type f -print -quit) ]]; then
   if yard releases --user "$(cat /run/secrets/onec_username)" \
     --pwd "$(cat /run/secrets/onec_password)" list \
-    --app-filter '.*' --output-file "$tmp/catalog.json" >"$tmp/list-log" 2>&1; then
+    --app-filter 'Технологическая платформа' --version-filter "^${version//./\\.}$" \
+    --output-file "$tmp/catalog.json" >"$tmp/list-log" 2>&1; then
     python3 "$(dirname "$0")/catalog-diagnostic.py" "$tmp/catalog.json"
   else
     python3 "$(dirname "$0")/download-diagnostic.py" "$tmp/list-log"

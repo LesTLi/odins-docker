@@ -14,3 +14,4 @@ if not isinstance(catalog, list):
 platform = [item for item in catalog if isinstance(item, dict)
             and item.get("Идентификатор") == "Platform83"]
 print(f"Portal catalog: applications={len(catalog)} platform83={len(platform)}")
+print(f"Portal catalog: matching versions={sum(len(p.get('Версии', [])) for p in platform)}")
