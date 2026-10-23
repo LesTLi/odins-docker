@@ -14,6 +14,8 @@ jobs:
         run: find scripts tests -name '*.sh' -type f -exec bash -n {} \;
       - name: Input behavior
         run: bash tests/test-inputs.sh
+      - name: Configuration behavior
+        run: bash tests/test-config.sh
       - name: ShellCheck
         run: shellcheck -x scripts/*.sh scripts/nircmd tests/*.sh
       - name: Dockerfile lint

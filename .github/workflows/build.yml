@@ -2,6 +2,14 @@ name: Build and test
 on:
   push:
     branches: [main, feat/images-actions]
+    paths:
+      - 'server/**'
+      - 'onec-test/**'
+      - 'scripts/**'
+      - 'tests/smoke.sh'
+      - 'versions.env'
+      - '.dockerignore'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
     inputs:
       version:
