@@ -14,6 +14,8 @@ jobs:
         run: find scripts tests -name '*.sh' -type f -exec bash -n {} \;
       - name: Input behavior
         run: bash tests/test-inputs.sh
+      - name: Archive behavior
+        run: python3 tests/test-extract.py
       - name: Configuration behavior
         run: bash tests/test-config.sh
       - name: ShellCheck

@@ -30,6 +30,17 @@ for identity in 10001:10001 23456:23457; do
     '
   fi
   if [[ $kind == onec-test ]]; then
+    if [[ $mode == full ]]; then
+      docker run --rm --user "$identity" "$tag" bash -ec '
+        for executable in 1cv8 1cv8c; do
+          binary=$(command -v "$executable")
+          test -x "$binary"
+          dependencies=$(ldd "$binary")
+          ! grep -q "not found" <<< "$dependencies"
+        done
+        grep -Fx "FtsJavaOpts=--add-opens java.base/java.lang=ALL-UNNAMED" /opt/1cv8/conf/conf.cfg
+      '
+    fi
     docker run --rm --user "$identity" "$tag" bash -ec '
       oscript -version; opm list; vrunner --version; java -version
       xdpyinfo >/dev/null
@@ -41,7 +52,16 @@ done
 status=0
 docker run --rm "$tag" bash -c 'exit 42' || status=$?
 [[ $status == 42 ]]
-container=$(docker run -d "$tag" sleep 300)
+container=$(docker run -d "$tag" bash -c 'trap "echo TERM_HANDLED; exit 0" TERM; echo CHILD_READY; while :; do sleep 1; done')
+ready=false
+for ((attempt=0; attempt<100; attempt++)); do
+  if docker logs "$container" 2>&1 | grep -q CHILD_READY; then ready=true; break; fi
+  [[ $(docker inspect -f '{{.State.Running}}' "$container") == true ]] || break
+  sleep 0.2
+done
+$ready || { docker logs "$container"; echo 'Child did not start' >&2; exit 1; }
 docker stop --time 10 "$container" >/dev/null
-[[ $(docker inspect -f '{{.State.ExitCode}}' "$container") != 137 ]]
+docker logs "$container" 2>&1 | grep -q TERM_HANDLED
+status=$(docker inspect -f '{{.State.ExitCode}}' "$container")
+[[ $status == 0 || $status == 143 ]]
 echo "PASS: $tag ($mode)"

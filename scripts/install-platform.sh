@@ -19,6 +19,10 @@ else
   rm /tmp/setup.run
 fi
 test -x "/opt/1cv8/x86_64/$version/ibcmd"
+if [[ $image == onec-test ]]; then
+  test -x "/opt/1cv8/x86_64/$version/1cv8"
+  test -x "/opt/1cv8/x86_64/$version/1cv8c"
+fi
 ln -s "/opt/1cv8/x86_64/$version" /opt/1cv8/current
 for program in ibcmd ibsrv 1cv8 1cv8c rac ras; do
   if [[ -x /opt/1cv8/current/$program ]]; then
