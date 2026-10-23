@@ -13,6 +13,12 @@ categories = {
     "network": ("timeout", "timed out", "resolve", "connect", "соединени"),
     "no-match": ("не найден", "не найдены", "not found"),
     "encoding": ("encoding", "кодировк"),
+    "version-selected": ("загрузка версии",),
+    "distribution-link-missing": ("не найдена ссылка на дистрибутив",),
+    "download-started": ("начало загрузки",),
+    "file-downloaded": ("загружен файл",),
+    "file-extracted": ("распакован файл",),
+    "processing-completed": ("завершение обработки данных",),
 }
 found = [name for name, patterns in categories.items() if any(p in log for p in patterns)]
 print("Download diagnostic categories: " + (", ".join(found) or "unclassified"))

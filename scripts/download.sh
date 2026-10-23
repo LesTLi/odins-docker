@@ -25,4 +25,9 @@ for filter in "${filters[@]}"; do
     python3 "$(dirname "$0")/download-diagnostic.py" "$tmp/log" >&2
     exit 1
   fi
+  python3 "$(dirname "$0")/download-diagnostic.py" "$tmp/log"
+  printf 'Downloaded distribution files: deb=%s run=%s archives=%s\n' \
+    "$(find "$output" -type f -name '*.deb' -printf . | wc -c)" \
+    "$(find "$output" -type f -name '*.run' -printf . | wc -c)" \
+    "$(find "$output" -type f \( -name '*.gz' -o -name '*.zip' -o -name '*.xz' \) -printf . | wc -c)"
 done
