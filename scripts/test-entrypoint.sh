@@ -2,6 +2,8 @@
 set -euo pipefail
 export DISPLAY=${DISPLAY:-:99}
 children=()
+# Invoked indirectly by the EXIT trap.
+# shellcheck disable=SC2317
 cleanup() { kill "${children[@]}" 2>/dev/null || true; wait 2>/dev/null || true; }
 trap cleanup EXIT
 trap 'exit 143' TERM

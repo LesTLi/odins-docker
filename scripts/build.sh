@@ -6,7 +6,7 @@ image=${1:?Usage: build.sh server|onec-test}
 [[ $image == server || $image == onec-test ]] || exit 2
 version=${ONEC_VERSION:-}
 base=${BASE_IMAGE:-}
-# shellcheck source=../versions.env
+# shellcheck source=versions.env
 source versions.env
 ONEC_VERSION=${version:-$ONEC_VERSION}
 BASE_IMAGE=${base:-$BASE_IMAGE}
@@ -20,7 +20,7 @@ args=(--file "$image/Dockerfile" --build-arg "BASE_IMAGE=$BASE_IMAGE"
   --build-arg "DIST_SOURCE=$source_kind")
 if [[ $source_kind == download ]]; then
   : "${ONEC_USERNAME:?Set ONEC_USERNAME}" "${ONEC_PASSWORD:?Set ONEC_PASSWORD}"
-  args+=(--secret id=onec_username,env=ONEC_USERNAME --secret id=onec_password,env=ONEC_PASSWORD)
+  args+=(--secret 'id=onec_username,env=ONEC_USERNAME' --secret 'id=onec_password,env=ONEC_PASSWORD')
 fi
 if [[ -n ${DIST_EXPORT_DIR:-} ]]; then
   args+=(--target distribution-export --output "type=local,dest=$DIST_EXPORT_DIR")

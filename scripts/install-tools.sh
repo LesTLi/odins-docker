@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# shellcheck source=../versions.env
+# shellcheck source=versions.env
 source /build/versions.env
 export DEBIAN_FRONTEND=noninteractive
 apt-get update

@@ -4,7 +4,7 @@ set_key() {
   local file=$1 key=$2 value=$3
   mkdir -p "$(dirname "$file")"
   touch "$file"
-  sed -i "/^[[:space:]]*$key[[:space:]]*=/d" "$file"
+  sed -i "/^[[:space:]]*${key}[[:space:]]*=/d" "$file"
   printf '\n%s=%s\n' "$key" "$value" >> "$file"
   chmod 644 "$file"
 }
