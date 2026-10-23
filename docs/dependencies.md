@@ -14,6 +14,8 @@
   39896577878; это фиксация полученного файла, не подпись издателя.
 - YARD 1.9.2: версия packagedef oscript-library/yard; используется только
   в стадии скачивания. Интерфейс releases get проверен по README проекта.
+  Fluent 0.6.1 переустанавливается с зависимостями: копия из OPM не содержит
+  lambdas, что выявил запуск yard --help в Actions 39897790928.
 - OPM обновляется до закреплённого 1.7.1: версия из DEB не понимает
   метод packagedef ВерсияСреды, используемый Vanessa Runner 2.6.1.
   Источник: https://github.com/oscript-library/opm/releases/tag/v1.7.1.
