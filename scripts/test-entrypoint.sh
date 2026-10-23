@@ -23,8 +23,10 @@ if [[ ${ENABLE_VNC:-0} == 1 ]]; then
   x11vnc -display "$DISPLAY" -rfbauth "$VNC_PASSWORD_FILE" -forever -shared -rfbport 5900 &
   children+=("$!")
 fi
-"$@" &
+exec 3<&0
+"$@" <&3 &
 children+=("$!")
+exec 3<&-
 status=0
 wait "${children[-1]}" || status=$?
 exit "$status"

@@ -21,8 +21,8 @@ jobs:
       - name: Dockerfile lint
         run: |
           # FROM arguments are tagged via BASE_IMAGE; OS packages track security updates.
-          docker run --rm -i hadolint/hadolint:2.12.0 --ignore DL3006 --ignore DL3008 < server/Dockerfile
-          docker run --rm -i hadolint/hadolint:2.12.0 --ignore DL3006 --ignore DL3008 < onec-test/Dockerfile
+          docker run --rm -i hadolint/hadolint:2.12.0 hadolint --ignore DL3006 --ignore DL3008 - < server/Dockerfile
+          docker run --rm -i hadolint/hadolint:2.12.0 hadolint --ignore DL3006 --ignore DL3008 - < onec-test/Dockerfile
       - name: Workflow lint
         run: |
           go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7

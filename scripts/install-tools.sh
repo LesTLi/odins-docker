@@ -16,7 +16,11 @@ if [[ ${1:-test} == downloader ]]; then
   opm install "yard@$YARD_VERSION"
 else
   opm install "vanessa-runner@$VRUNNER_VERSION"
-  opm install "add@$ADD_VERSION"
+  curl --fail --location --retry 3 --proto '=https' \
+    "https://github.com/vanessa-opensource/add/releases/download/v$ADD_VERSION/add-$ADD_VERSION.ospx" -o /tmp/add.ospx
+  sha256sum /tmp/add.ospx
+  opm install -f /tmp/add.ospx
+  rm /tmp/add.ospx
 fi
 rm -f /tmp/onescript.deb
 rm -rf /var/lib/apt/lists/*

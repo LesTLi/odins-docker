@@ -11,6 +11,7 @@ set_key() {
 set_key /opt/1cv8/conf/conf.cfg DisableUnsafeActionProtection '.*'
 set_key /opt/1cv8/conf/conf.cfg SystemLanguage RU
 set_key /opt/1cv8/common/1cestart.cfg UseHWLicenses 0
+set_key /opt/1cv8/current/conf/conf.cfg ConfLocation /opt/1cv8/conf
 if [[ $1 == onec-test ]]; then
   set_key /opt/1cv8/conf/conf.cfg FtsJavaOpts '--add-opens java.base/java.lang=ALL-UNNAMED'
 fi
