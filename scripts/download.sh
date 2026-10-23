@@ -22,6 +22,7 @@ for filter in "${filters[@]}"; do
     --version-filter "^${version//./\\.}$" --distr-filter "$filter" \
     --download-existing --download-limit 1 --path "$output" >"$tmp/log" 2>&1; then
     echo '1C download failed; check account access, version and portal availability' >&2
+    python3 "$(dirname "$0")/download-diagnostic.py" "$tmp/log" >&2
     exit 1
   fi
 done

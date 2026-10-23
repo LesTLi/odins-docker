@@ -14,6 +14,7 @@ apt-get install -y --no-install-recommends /tmp/onescript.deb
 opm install "opm@$OPM_VERSION"
 if [[ ${1:-test} == downloader ]]; then
   opm install "yard@$YARD_VERSION"
+  yard --help
 else
   opm install "vanessa-runner@$VRUNNER_VERSION"
   curl --fail --location --retry 3 --proto '=https' \
