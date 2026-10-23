@@ -12,8 +12,11 @@
 - ADD 6.9.5: https://github.com/vanessa-opensource/add/releases/tag/v6.9.5.
   SHA256 закреплён по файлу официального release, скачанному в Actions
   39896577878; это фиксация полученного файла, не подпись издателя.
-- YARD 1.9.2: версия packagedef oscript-library/yard; используется только
-  в стадии скачивания. Интерфейс releases get проверен по README проекта.
+- YARD 1.14.0: официальный release автора, SHA256 из GitHub asset digest:
+  https://github.com/arkuznetsov/yard/releases/tag/v.1.14.0.
+  Используется только в стадии скачивания. Зеркало oscript-library/yard
+  устарело на 1.9.2 и не включает исправления парсинга портала и вложенных
+  Linux-архивов (upstream issues #40, #46, #77).
   Fluent 0.6.1 переустанавливается с зависимостями: копия из OPM не содержит
   lambdas, что выявил запуск yard --help в Actions 39897790928.
 - OPM обновляется до закреплённого 1.7.1: версия из DEB не понимает

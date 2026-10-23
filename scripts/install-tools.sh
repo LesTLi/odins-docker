@@ -15,7 +15,11 @@ opm install "opm@$OPM_VERSION"
 if [[ ${1:-test} == downloader ]]; then
   # OPM bundles fluent without all of its transitive runtime dependencies.
   opm install "fluent@$FLUENT_VERSION"
-  opm install "yard@$YARD_VERSION"
+  curl --fail --location --retry 3 --proto '=https' \
+    "https://github.com/arkuznetsov/yard/releases/download/v.$YARD_VERSION/yard-$YARD_VERSION.ospx" -o /tmp/yard.ospx
+  echo "$YARD_SHA256  /tmp/yard.ospx" | sha256sum --check --strict
+  opm install -f /tmp/yard.ospx
+  rm /tmp/yard.ospx
   yard --help
 else
   opm install "vanessa-runner@$VRUNNER_VERSION"

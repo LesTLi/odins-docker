@@ -52,7 +52,7 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 полная работоспособность платформы ещё не подтверждена.
 
 Выбраны Ubuntu 22.04, OneScript 1.9.4, OPM 1.7.1, Vanessa Runner 2.6.1,
-ADD 6.9.5, Java 17. YARD 1.9.2 используется только для скачивания.
+ADD 6.9.5, Java 17. YARD 1.14.0 используется только для скачивания.
 Точные источники и ограничения фиксации — [dependencies.md](dependencies.md).
 Ход реализации и решения — [implementation-progress.md](implementation-progress.md).
 
