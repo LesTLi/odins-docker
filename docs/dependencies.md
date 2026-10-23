@@ -12,7 +12,9 @@
 - ADD 6.9.5: https://github.com/vanessa-opensource/add/releases/tag/v6.9.5.
 - YARD 1.9.2: версия packagedef oscript-library/yard; используется только
   в стадии скачивания. Интерфейс releases get проверен по README проекта.
-- OPM поставляется в DEB OneScript, не обновляется через update --all.
+- OPM обновляется до закреплённого 1.7.1: версия из DEB не понимает
+  метод packagedef ВерсияСреды, используемый Vanessa Runner 2.6.1.
+  Источник: https://github.com/oscript-library/opm/releases/tag/v1.7.1.
   Верхнеуровневые OPM-пакеты закреплены; транзитивные зависимости хаба могут
   меняться. Пока нет полного lock транзитивных пакетов, битовую
   воспроизводимость сборки не заявляем.

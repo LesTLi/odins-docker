@@ -8,6 +8,7 @@ cleanup() {
   sudo rm -rf "$tmp"
 }
 trap cleanup EXIT
+docker run --rm "$tag" bash -ec 'test "$(id -u)" != 0; test -w "$HOME"'
 for identity in 10001:10001 23456:23457; do
   mkdir -p "$tmp/work space"
   sudo chown "${identity/:/:}" "$tmp/work space"

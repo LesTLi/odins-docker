@@ -18,8 +18,9 @@ jobs:
         run: shellcheck -x scripts/*.sh scripts/nircmd tests/*.sh
       - name: Dockerfile lint
         run: |
-          docker run --rm -i hadolint/hadolint:2.12.0 < server/Dockerfile
-          docker run --rm -i hadolint/hadolint:2.12.0 < onec-test/Dockerfile
+          # FROM arguments are tagged via BASE_IMAGE; OS packages track security updates.
+          docker run --rm -i hadolint/hadolint:2.12.0 --ignore DL3006 --ignore DL3008 < server/Dockerfile
+          docker run --rm -i hadolint/hadolint:2.12.0 --ignore DL3006 --ignore DL3008 < onec-test/Dockerfile
       - name: Workflow lint
         run: |
           go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7

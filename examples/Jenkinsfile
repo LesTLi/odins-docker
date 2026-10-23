@@ -7,14 +7,12 @@ pipeline {
     stages {
         stage('Check tools') {
             steps {
-                script {
-                    def uid = sh(script: 'id -u', returnStdout: true).trim()
-                    def gid = sh(script: 'id -g', returnStdout: true).trim()
-                    docker.image(params.TEST_IMAGE).inside("--user ${uid}:${gid}") {
-                        sh 'id && vrunner --version && ibcmd --help'
-                        // Здесь выполняется команда тестирования вашей конфигурации.
-                    }
-                }
+                sh '''
+                  docker run --rm --user "$(id -u):$(id -g)" \
+                    --mount "type=bind,src=$WORKSPACE,dst=/workspace" \
+                    "$TEST_IMAGE" bash -ec 'id; vrunner --version; ibcmd --help'
+                '''
+                // Добавьте команду тестирования конфигурации в bash -ec выше.
             }
         }
     }

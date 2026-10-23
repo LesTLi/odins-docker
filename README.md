@@ -88,6 +88,10 @@ docker run --rm --user "$(id -u):$(id -g)" \
 каталога базы на хосте. CIFS монтируйте на хосте без nobrl, а в Samba
 не используйте locking=no. Пример pipeline: [examples/Jenkinsfile](examples/Jenkinsfile).
 
+Пример использует docker run для всей команды тестирования. Шаги docker exec
+и Jenkins docker.image(...).inside() не наследуют переменные, установленные
+entrypoint (HOME, NSS, DISPLAY), поэтому напрямую их здесь не используем.
+
 ## Графические тесты
 
 onec-test запускает Xvfb автоматически; DISPLAY по умолчанию :99,
