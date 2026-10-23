@@ -14,7 +14,7 @@ apt-get install -y --no-install-recommends /tmp/onescript.deb
 opm install "opm@$OPM_VERSION"
 if [[ ${1:-test} == downloader ]]; then
   # OPM bundles fluent without all of its transitive runtime dependencies.
-  opm install -f "fluent@$FLUENT_VERSION"
+  opm install "fluent@$FLUENT_VERSION"
   opm install "yard@$YARD_VERSION"
   yard --help
 else
