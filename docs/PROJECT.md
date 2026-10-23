@@ -59,9 +59,9 @@ ADD 6.9.5, Java 17. YARD 1.9.2 используется только для ск
 ## Ограничения и результаты проверок
 
 - Проверено через GitHub: LesTLi/odins-docker — private, default branch main.
-  Workflows созданы и запускаются на push рабочей ветки. Наличие Actions secrets не проверено;
-  подключённый GitHub инструмент не предоставляет доступа к secrets API.
-  Для загрузки запланированы ONEC_USERNAME и ONEC_PASSWORD.
+  Workflows созданы и запускаются на push рабочей ветки. Владелец подтвердил
+  добавление Actions secrets ONEC_USERNAME и ONEC_PASSWORD 2026-10-23.
+  Доступ к порталу с ними ещё проверяется.
 
 - При проверке 2026-10-22 Docker CLI был установлен, daemon недоступен.
   Перед сборкой проверить состояние повторно.

@@ -42,7 +42,7 @@ for identity in 10001:10001 23456:23457; do
       '
     fi
     docker run --rm --user "$identity" "$tag" bash -ec '
-      oscript -version; opm list; vrunner --version; java -version
+      oscript -version; opm list; vrunner version; java -version
       xdpyinfo >/dev/null
       nircmd savescreenshot "$HOME/screen shot.png"
       test -s "$HOME/screen shot.png"

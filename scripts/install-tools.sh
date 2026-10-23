@@ -18,7 +18,7 @@ else
   opm install "vanessa-runner@$VRUNNER_VERSION"
   curl --fail --location --retry 3 --proto '=https' \
     "https://github.com/vanessa-opensource/add/releases/download/v$ADD_VERSION/add-$ADD_VERSION.ospx" -o /tmp/add.ospx
-  sha256sum /tmp/add.ospx
+  echo "$ADD_SHA256  /tmp/add.ospx" | sha256sum --check --strict
   opm install -f /tmp/add.ospx
   rm /tmp/add.ospx
 fi

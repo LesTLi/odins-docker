@@ -12,6 +12,7 @@ if [[ $1 == ui ]]; then
     libgtk-3-0 libgtk2.0-0 libwebkit2gtk-4.0-37 libglu1-mesa policykit-1 \
     zenity x11-utils evince xvfb xauth x11vnc dbus-x11 scrot \
     openjdk-17-jre-headless git pandoc iproute2 iputils-ping net-tools procps
+  install -d -m 1777 /tmp/.X11-unix
 fi
 locale-gen ru_RU.UTF-8
 fc-match Arial | grep -qi arial

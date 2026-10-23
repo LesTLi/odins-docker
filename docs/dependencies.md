@@ -10,6 +10,8 @@
   Версия 3.x несовместима с прежними командами и требует OneScript 2.x:
   https://github.com/vanessa-opensource/vanessa-runner/releases/tag/v3.0.0.
 - ADD 6.9.5: https://github.com/vanessa-opensource/add/releases/tag/v6.9.5.
+  SHA256 закреплён по файлу официального release, скачанному в Actions
+  39896577878; это фиксация полученного файла, не подпись издателя.
 - YARD 1.9.2: версия packagedef oscript-library/yard; используется только
   в стадии скачивания. Интерфейс releases get проверен по README проекта.
 - OPM обновляется до закреплённого 1.7.1: версия из DEB не понимает
