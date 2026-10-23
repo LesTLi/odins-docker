@@ -33,3 +33,14 @@ for filter in "${filters[@]}"; do
     "$(find "$output" -type f -name '*.run' -printf . | wc -c)" \
     "$(find "$output" -type f \( -name '*.gz' -o -name '*.zip' -o -name '*.xz' \) -printf . | wc -c)"
 done
+if [[ -z $(find "$output" -type f -print -quit) ]]; then
+  if yard releases --user "$(cat /run/secrets/onec_username)" \
+    --pwd "$(cat /run/secrets/onec_password)" list \
+    --app-filter '.*' --output-file "$tmp/catalog.json" >"$tmp/list-log" 2>&1; then
+    python3 "$(dirname "$0")/catalog-diagnostic.py" "$tmp/catalog.json"
+  else
+    python3 "$(dirname "$0")/download-diagnostic.py" "$tmp/list-log"
+  fi
+  echo '1C portal returned no distribution files' >&2
+  exit 1
+fi

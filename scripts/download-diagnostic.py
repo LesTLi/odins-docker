@@ -22,3 +22,4 @@ categories = {
 }
 found = [name for name, patterns in categories.items() if any(p in log for p in patterns)]
 print("Download diagnostic categories: " + (", ".join(found) or "unclassified"))
+print(f"Vendor log characters: {len(log)}")
