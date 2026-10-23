@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 set +x
+# Mono must decode Cyrillic command-line filters as UTF-8 in this RUN too.
+export LANG=C.UTF-8 LC_ALL=C.UTF-8
 format=$1 image=$2 version=$3 output=$4
 [[ -s /run/secrets/onec_username && -s /run/secrets/onec_password ]] || {
   echo 'Download requires ONEC_USERNAME and ONEC_PASSWORD BuildKit secrets' >&2; exit 1;
