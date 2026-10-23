@@ -14,7 +14,9 @@ if [[ ${1:-test} == downloader ]]; then
   unzip -q /tmp/onescript.zip -d /opt/onescript
   chmod +x /opt/onescript/bin/oscript /opt/onescript/bin/opm
   ln -s /opt/onescript/bin/oscript /usr/local/bin/oscript
-  ln -s /opt/onescript/bin/opm /usr/local/bin/opm
+  # OPM resolves ../lib from its own script path; a symlink would change it.
+  printf '#!/bin/sh\nexec /opt/onescript/bin/opm "$@"\n' > /usr/local/bin/opm
+  chmod 755 /usr/local/bin/opm
   export OSCRIPTBIN=/usr/local/bin
   rm /tmp/onescript.zip
 else
