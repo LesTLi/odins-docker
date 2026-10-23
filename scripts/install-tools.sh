@@ -5,6 +5,19 @@ source /build/versions.env
 export DEBIAN_FRONTEND=noninteractive
 export LANG=C.UTF-8 LC_ALL=C.UTF-8
 apt-get update
+if [[ ${1:-test} == downloader ]]; then
+  apt-get install -y --no-install-recommends ca-certificates curl unzip libicu70 libssl3 libstdc++6 zlib1g
+  curl --fail --location --retry 3 --proto '=https' \
+    "https://github.com/EvilBeaver/OneScript/releases/download/v$DOWNLOADER_ONESCRIPT_VERSION/OneScript-$DOWNLOADER_ONESCRIPT_VERSION-linux-x64.zip" -o /tmp/onescript.zip
+  echo "$DOWNLOADER_ONESCRIPT_SHA256  /tmp/onescript.zip" | sha256sum --check --strict
+  mkdir -p /opt/onescript
+  unzip -q /tmp/onescript.zip -d /opt/onescript
+  chmod +x /opt/onescript/bin/oscript /opt/onescript/bin/opm
+  ln -s /opt/onescript/bin/oscript /usr/local/bin/oscript
+  ln -s /opt/onescript/bin/opm /usr/local/bin/opm
+  export OSCRIPTBIN=/usr/local/bin
+  rm /tmp/onescript.zip
+else
 apt-get install -y --no-install-recommends ca-certificates curl mono-runtime ca-certificates-mono \
   libmono-i18n4.0-all libmono-system-runtime-serialization4.0-cil
 curl --fail --location --retry 3 --proto '=https' \
@@ -12,6 +25,7 @@ curl --fail --location --retry 3 --proto '=https' \
 echo "$ONESCRIPT_SHA256  /tmp/onescript.deb" | sha256sum --check --strict
 apt-get install -y --no-install-recommends /tmp/onescript.deb
 opm install "opm@$OPM_VERSION"
+fi
 if [[ ${1:-test} == downloader ]]; then
   # OPM bundles fluent without all of its transitive runtime dependencies.
   opm install "fluent@$FLUENT_VERSION"

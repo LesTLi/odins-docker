@@ -6,6 +6,10 @@
 - OneScript 1.9.4: официальный DEB, SHA256 в versions.env взят из
   GitHub release asset digest:
   https://github.com/EvilBeaver/OneScript/releases/tag/v1.9.4.
+  Только стадия downloader использует standalone OneScript 2.2.0:
+  https://github.com/EvilBeaver/OneScript/releases/tag/v2.2.0.
+  SHA256 взят из release asset digest. Он нужен современным зависимостям
+  YARD (ibcmdrunner требует >=2.0.0) и не попадает в конечный образ.
 - Vanessa Runner 2.6.1: совместим с OneScript >=1.9.2, сохраняет CLI 2.x.
   Версия 3.x несовместима с прежними командами и требует OneScript 2.x:
   https://github.com/vanessa-opensource/vanessa-runner/releases/tag/v3.0.0.
