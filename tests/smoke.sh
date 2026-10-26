@@ -20,6 +20,9 @@ for identity in 10001:10001 23456:23457; do
   sudo rm "$tmp/work space/owned" "$tmp/work space/argument"
   if [[ $mode == full ]]; then
     docker run --rm --user "$identity" "$tag" ibcmd --help
+    if [[ $kind == server ]]; then
+      docker run --rm --user "$identity" "$tag" bash -ec 'test ! -e /opt/1cv8/current/1cv8; test ! -e /opt/1cv8/current/1cv8c'
+    fi
     docker run --rm --user "$identity" "$tag" bash -ec '
       for expected in "DisableUnsafeActionProtection=.*" "SystemLanguage=RU"; do
         test "$(grep -Fxc "$expected" /opt/1cv8/conf/conf.cfg)" = 1

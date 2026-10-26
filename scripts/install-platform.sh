@@ -15,8 +15,10 @@ else
   chmod 700 /tmp/setup.run
   components=server,ru
   [[ $image != onec-test ]] || components=server,client_full,client_thin_fib,ru
+  disabled=client_thin,v8_install_deps,desktop_icons,ws,server_admin,config_storage_server,additional_admin_functions,liberica_jre,integrity_monitoring
+  [[ $image != server ]] || disabled+=,client_full,client_thin_fib
   /tmp/setup.run --help
-  /tmp/setup.run --mode unattended --enable-components "$components"
+  /tmp/setup.run --mode unattended --enable-components "$components" --disable-components "$disabled"
   rm /tmp/setup.run
 fi
 test -x "/opt/1cv8/x86_64/$version/ibcmd"
