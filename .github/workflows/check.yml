@@ -18,6 +18,8 @@ jobs:
         run: bash tests/test-versioning.sh
       - name: Export guard behavior
         run: bash tests/test-export.sh
+      - name: Release archive roundtrip
+        run: bash tests/test-release-export.sh
       - name: Archive behavior
         run: python3 tests/test-extract.py
       - name: Configuration behavior
