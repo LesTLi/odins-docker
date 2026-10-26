@@ -41,8 +41,8 @@ TAR, контрольную сумму SHA256 и metadata JSON. Хранение
    Пример имени (номер запуска будет вашим):
 
 ```bash
-sha256sum --check odins-onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar.sha256
-docker load --input odins-onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar
+sha256sum --check onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar.sha256
+docker load --input onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar
 ```
 
 Точный тег указан в Actions Summary, metadata JSON и выводе docker load.
@@ -54,15 +54,24 @@ docker load --input odins-onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd
 
 `IMAGE_VERSION=1.0.0` в versions.env — версия проекта, независимая от
 `ONEC_VERSION=8.3.27.2130`. Уникальный тег сборки:
-`odins-onec-test:1.0.0-1c8.3.27.2130-run-b123456-a1`.
+`onec-test:1.0.0-1c8.3.27.2130-run-b123456-a1`.
 `b` — run ID, `a` — attempt. Ветки и rerun получают только этот тег.
+
+Версия 1С по умолчанию во всех запусках скрипта сборки берётся из
+`ONEC_VERSION` в versions.env. Необязательное поле version ручного запуска
+Actions переопределяет её только для этого запуска; пустое поле сохраняет
+значение файла. Изменение versions.env действует и на автоматические сборки.
 
 Для выпуска измените IMAGE_VERSION, внесите изменения в main и создайте
 соответствующий Git-тег vX.Y.Z. Несовпадение Git-тега и IMAGE_VERSION — ошибка.
 В первой попытке push Git-тега к уже проверенному образу добавляется также
-релизный alias, например `odins-onec-test:1.0.0-1c8.3.27.2130-run`.
+релизный alias, например `onec-test:1.0.0-1c8.3.27.2130-run`.
 Он сохраняется в том же TAR без пересборки. Выпущенные Git-теги не переносите;
 новая версия выпуска требует нового номера. Подробнее: [versioning.md](docs/versioning.md).
+
+В артефакте также есть size-report.txt: фактический размер Docker image,
+каталоги и крупнейшие файлы платформы, список DEB-пакетов с размерами.
+Этот отчёт позволяет сравнить результат установки DEB и RUN.
 
 ## Источник и формат дистрибутива
 
@@ -102,8 +111,8 @@ DIST_SOURCE=download INSTALL_FORMAT=run bash scripts/build.sh onec-test
 
 ```bash
 # Используйте свои теги из metadata JSON; здесь приведены примеры.
-SERVER_IMAGE=odins-server:1.0.0-1c8.3.27.2130-deb-b123456-a1
-TEST_IMAGE=odins-onec-test:1.0.0-1c8.3.27.2130-run-b123456-a1
+SERVER_IMAGE=onec-server:1.0.0-1c8.3.27.2130-deb-b123456-a1
+TEST_IMAGE=onec-test:1.0.0-1c8.3.27.2130-run-b123456-a1
 docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,src=$PWD,dst=/workspace" \
   "$SERVER_IMAGE" ibcmd --help

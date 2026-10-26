@@ -13,6 +13,8 @@ export DIST_SOURCE=local
 bash scripts/build.sh "$image"
 bash tests/smoke.sh "$IMAGE_TAG" "$image"
 printf '### %s / image %s / 1C %s / %s\nDownload and local build + smoke tests passed.\n' "$image" "$IMAGE_VERSION" "$ONEC_VERSION" "$INSTALL_FORMAT" >> "$GITHUB_STEP_SUMMARY"
+bash scripts/image-size-report.sh "$IMAGE_TAG" | tee "$RUNNER_TEMP/image-size-$image-$INSTALL_FORMAT.txt"
 # Distribution and compiler caches are no longer needed; keep the loaded image.
 docker buildx prune --all --force
 bash scripts/export-image.sh "$image" "$IMAGE_TAG" "$RUNNER_TEMP/image-artifacts/$image-$INSTALL_FORMAT"
+cp "$RUNNER_TEMP/image-size-$image-$INSTALL_FORMAT.txt" "$RUNNER_TEMP/image-artifacts/$image-$INSTALL_FORMAT/size-report.txt"

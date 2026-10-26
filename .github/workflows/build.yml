@@ -14,9 +14,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 1C platform version
-        default: '8.3.27.2130'
-        required: true
+        description: '1C platform override (empty uses versions.env)'
+        default: ''
+        required: false
         type: string
 permissions:
   contents: read
@@ -70,7 +70,7 @@ jobs:
         env:
           ONEC_USERNAME: ${{ secrets.ONEC_USERNAME }}
           ONEC_PASSWORD: ${{ secrets.ONEC_PASSWORD }}
-          ONEC_VERSION: ${{ inputs.version || '8.3.27.2130' }}
+          ONEC_VERSION: ${{ inputs.version }}
           INSTALL_FORMAT: ${{ matrix.format }}
           IMAGE: ${{ matrix.image }}
         run: bash scripts/ci-build-test.sh "$IMAGE"

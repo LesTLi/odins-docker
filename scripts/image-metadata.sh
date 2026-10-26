@@ -5,13 +5,15 @@ metadata_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 init_image_metadata() {
   local kind=${1:?image} requested_version=${IMAGE_VERSION:-}
   local requested_onec=${ONEC_VERSION:-} requested_base=${BASE_IMAGE:-}
-  local format=${INSTALL_FORMAT:-deb} suffix
+  local format=${INSTALL_FORMAT:-deb} suffix repository
   # shellcheck source=versions.env
   source "$metadata_root/versions.env"
   IMAGE_VERSION=${requested_version:-$IMAGE_VERSION}
   ONEC_VERSION=${requested_onec:-$ONEC_VERSION}
   BASE_IMAGE=${requested_base:-$BASE_IMAGE}
   [[ $kind == server || $kind == onec-test ]] || { echo 'Invalid image kind' >&2; return 1; }
+  repository=onec-test
+  [[ $kind != server ]] || repository=onec-server
   [[ $IMAGE_VERSION =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
     echo 'IMAGE_VERSION must be a stable MAJOR.MINOR.PATCH version' >&2; return 1;
   }
@@ -30,14 +32,14 @@ init_image_metadata() {
   else
     suffix="local-$(date -u +%Y%m%d%H%M%S)-$RANDOM"
   fi
-  IMAGE_BUILD_TAG="odins-$kind:$IMAGE_VERSION-1c$ONEC_VERSION-$format-$suffix"
+  IMAGE_BUILD_TAG="$repository:$IMAGE_VERSION-1c$ONEC_VERSION-$format-$suffix"
   if [[ ${GITHUB_REF:-} == refs/tags/* || ${GITHUB_REF_TYPE:-} == tag ]]; then
     [[ ${GITHUB_REF:-} == "refs/tags/v$IMAGE_VERSION" ]] || {
       echo 'Git release tag must match IMAGE_VERSION' >&2; return 1;
     }
     # Reruns/manual runs get a new build tag, never a replacement release alias.
     if [[ ${GITHUB_ACTIONS:-} == true && ${GITHUB_EVENT_NAME:-} == push && $GITHUB_RUN_ATTEMPT == 1 ]]; then
-      IMAGE_RELEASE_TAG="odins-$kind:$IMAGE_VERSION-1c$ONEC_VERSION-$format"
+      IMAGE_RELEASE_TAG="$repository:$IMAGE_VERSION-1c$ONEC_VERSION-$format"
     fi
   fi
   IMAGE_ARCHIVE_STEM="${IMAGE_BUILD_TAG/:/_}_linux-amd64"
