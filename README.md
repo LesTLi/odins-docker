@@ -4,8 +4,11 @@
 
 | Образ | Назначение |
 | --- | --- |
-| `server` | `ibcmd`, компоненты common/server, без автозапуска кластера |
+| `onec-server` | `ibcmd`, компоненты common/server, без автозапуска кластера |
 | `onec-test` | Полный клиент, конфигуратор, OneScript, Vanessa Runner 2.6.1, ADD, Java 17, Xvfb и VNC |
+
+Для onec-server каталог Dockerfile и аргумент scripts/build.sh по-прежнему
+называются server; имя готового Docker-образа — onec-server.
 
 Сборка и smoke-тесты всех сочетаний образа, формата и источника проверены
 в GitHub Actions. Ссылки на запуски и границы проверок — в
@@ -25,7 +28,7 @@
 4. Сборка запускается при push в main, рабочую ветку feat/images-actions
    и Git-теги вида v1.0.0.
    После появления workflow в main доступен Actions → Build and test →
-   Run workflow с указанием версии платформы.
+   Run workflow с необязательным переопределением версии платформы.
 
 Отсутствующие secrets приводят к ошибке, а не к успешному пропуску сборки.
 После проверок каждое задание сохраняет один итоговый образ в **Artifacts**:
