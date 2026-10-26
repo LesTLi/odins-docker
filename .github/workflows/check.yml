@@ -16,6 +16,8 @@ jobs:
         run: bash tests/test-inputs.sh
       - name: Versioning behavior
         run: bash tests/test-versioning.sh
+      - name: Export guard behavior
+        run: bash tests/test-export.sh
       - name: Archive behavior
         run: python3 tests/test-extract.py
       - name: Configuration behavior

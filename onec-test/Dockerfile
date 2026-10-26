@@ -49,12 +49,15 @@ CMD ["bash"]
 
 FROM tools AS runtime
 USER root
+ARG IMAGE_VERSION=1.0.0
 ARG ONEC_VERSION=8.3.27.2130
 ARG INSTALL_FORMAT=deb
 RUN --mount=type=bind,from=distribution,source=/distribution,target=/distribution \
     bash /build/scripts/install-platform.sh "$INSTALL_FORMAT" onec-test "$ONEC_VERSION" /distribution \
     && rm -rf /build
 LABEL org.opencontainers.image.title="odins-docker onec-test" \
-      org.opencontainers.image.version=${ONEC_VERSION}
+      org.opencontainers.image.version=${IMAGE_VERSION} \
+      io.github.lestli.odins-docker.onec.version=${ONEC_VERSION} \
+      io.github.lestli.odins-docker.install.format=${INSTALL_FORMAT}
 USER 10001:10001
 CMD ["bash"]

@@ -4,3 +4,6 @@ distr/*
 .secrets/
 .superpowers/
 __pycache__/
+artifacts/
+*.tar
+*.tar.sha256

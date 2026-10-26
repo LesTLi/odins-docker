@@ -22,14 +22,46 @@
 3. **Build and test** сначала собирает зависимости без платформы и проверяет
    non-root запуск. Затем собирает оба образа в форматах DEB и RUN,
    проверяя download и local на runner.
-4. Сборка запускается при push в main и рабочую ветку feat/images-actions.
+4. Сборка запускается при push в main, рабочую ветку feat/images-actions
+   и Git-теги вида v1.0.0.
    После появления workflow в main доступен Actions → Build and test →
    Run workflow с указанием версии платформы.
 
 Отсутствующие secrets приводят к ошибке, а не к успешному пропуску сборки.
-Дистрибутивы и готовые образы пока не публикуются в registry или artifacts.
-GitHub runner удаляется после job. Для использования результата Jenkins
-потребуется отдельно настроить приватный registry и публикацию после тестов.
+После проверок каждое задание сохраняет один итоговый образ в **Artifacts**:
+TAR, контрольную сумму SHA256 и metadata JSON. Хранение — **1 день**.
+Архив перед загрузкой проверяется через docker load с сопоставлением image ID
+и labels. Registry в этом workflow не используется.
+
+## Скачать образ и загрузить на сервер
+
+1. Откройте успешный запуск **Build and test** → **Artifacts**.
+2. Выберите onec-test или server и формат run/deb; скачайте ZIP и распакуйте.
+3. Проверьте SHA256 и загрузите TAR. Пример имени (номер запуска будет вашим):
+
+```bash
+sha256sum --check odins-onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar.sha256
+docker load --input odins-onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar
+```
+
+Точный тег указан в Actions Summary, metadata JSON и выводе docker load.
+На Windows SHA256 можно получить командой PowerShell `Get-FileHash -Algorithm SHA256`.
+После загрузки используйте этот тег в Jenkins TEST_IMAGE; registry для этого
+не требуется, если образ загружен в Docker daemon самого агента.
+
+## Версии и выпуск
+
+`IMAGE_VERSION=1.0.0` в versions.env — версия проекта, независимая от
+`ONEC_VERSION=8.3.27.2130`. Уникальный тег сборки:
+`odins-onec-test:1.0.0-1c8.3.27.2130-run-b123456-a1`.
+`b` — run ID, `a` — attempt. Ветки и rerun получают только этот тег.
+
+Для выпуска измените IMAGE_VERSION, внесите изменения в main и создайте
+соответствующий Git-тег vX.Y.Z. Несовпадение Git-тега и IMAGE_VERSION — ошибка.
+В первой попытке push Git-тега к уже проверенному образу добавляется также
+релизный alias, например `odins-onec-test:1.0.0-1c8.3.27.2130-run`.
+Он сохраняется в том же TAR без пересборки. Выпущенные Git-теги не переносите;
+новая версия выпуска требует нового номера. Подробнее: [versioning.md](docs/versioning.md).
 
 ## Источник и формат дистрибутива
 
@@ -68,13 +100,16 @@ DIST_SOURCE=download INSTALL_FORMAT=run bash scripts/build.sh onec-test
 ## Запуск без root и Jenkins
 
 ```bash
+# Используйте свои теги из metadata JSON; здесь приведены примеры.
+SERVER_IMAGE=odins-server:1.0.0-1c8.3.27.2130-deb-b123456-a1
+TEST_IMAGE=odins-onec-test:1.0.0-1c8.3.27.2130-run-b123456-a1
 docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,src=$PWD,dst=/workspace" \
-  odins-server:8.3.27.2130-deb ibcmd --help
+  "$SERVER_IMAGE" ibcmd --help
 
 docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,src=$PWD,dst=/workspace" \
-  odins-onec-test:8.3.27.2130-run vrunner --help
+  "$TEST_IMAGE" vrunner --help
 ```
 
 По умолчанию UID/GID — 10001:10001. Для Jenkins передавайте UID/GID
@@ -99,7 +134,7 @@ XVFB_SCREEN — 1440x900x24. Для снимка экрана:
 
 ```bash
 docker run --rm --user "$(id -u):$(id -g)" \
-  -v "$PWD:/workspace" odins-onec-test:8.3.27.2130-run \
+  -v "$PWD:/workspace" "$TEST_IMAGE" \
   nircmd savescreenshot '/workspace/screen shot.png'
 ```
 

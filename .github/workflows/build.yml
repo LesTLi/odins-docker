@@ -2,6 +2,7 @@ name: Build and test
 on:
   push:
     branches: [main, feat/images-actions]
+    tags: ['v[0-9]*']
     paths:
       - 'server/**'
       - 'onec-test/**'
@@ -65,6 +66,7 @@ jobs:
           persist-credentials: false
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
       - name: Build and test both sources
+        id: package
         env:
           ONEC_USERNAME: ${{ secrets.ONEC_USERNAME }}
           ONEC_PASSWORD: ${{ secrets.ONEC_PASSWORD }}
@@ -72,3 +74,12 @@ jobs:
           INSTALL_FORMAT: ${{ matrix.format }}
           IMAGE: ${{ matrix.image }}
         run: bash scripts/ci-build-test.sh "$IMAGE"
+      - name: Upload verified Docker image TAR
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ steps.package.outputs.artifact_name }}
+          path: ${{ steps.package.outputs.artifact_path }}
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+          overwrite: false

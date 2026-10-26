@@ -19,6 +19,8 @@ GITHUB_REF=refs/tags/v1.0.0 GITHUB_REF_TYPE=tag init_image_metadata server
 [[ $IMAGE_RELEASE_TAG == odins-server:1.0.0-1c8.3.27.2130-run ]]
 GITHUB_REF=refs/tags/v1.0.0 GITHUB_REF_TYPE=tag GITHUB_RUN_ATTEMPT=2 init_image_metadata server
 [[ -z $IMAGE_RELEASE_TAG ]]
+GITHUB_REF=refs/tags/v1.0.0 GITHUB_REF_TYPE=tag GITHUB_EVENT_NAME=workflow_dispatch init_image_metadata server
+[[ -z $IMAGE_RELEASE_TAG ]]
 reject() {
   if ( "$@" ); then echo 'FAIL: invalid version metadata accepted' >&2; exit 1; fi
 }
