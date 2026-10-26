@@ -15,13 +15,16 @@ cleanup() {
   rm -rf "$tmp"
 }
 trap cleanup EXIT
-printf 'FROM scratch\n' | docker build --network=none --tag "$candidate" \
+mkdir "$tmp/context"
+printf 'fixture\n' > "$tmp/context/payload"
+printf 'FROM scratch\nCOPY payload /payload\n' > "$tmp/context/Dockerfile"
+docker build --network=none --tag "$candidate" \
   --label "org.opencontainers.image.version=$IMAGE_VERSION" \
   --label "org.opencontainers.image.revision=$IMAGE_REVISION" \
   --label "org.opencontainers.image.source=$IMAGE_SOURCE" \
   --label "org.opencontainers.image.created=$IMAGE_CREATED" \
   --label "io.github.lestli.odins-docker.onec.version=$ONEC_VERSION" \
-  --label "io.github.lestli.odins-docker.install.format=$INSTALL_FORMAT" -
+  --label "io.github.lestli.odins-docker.install.format=$INSTALL_FORMAT" "$tmp/context"
 bash scripts/export-image.sh server "$candidate" "$tmp/release"
 (cd "$tmp/release" && sha256sum --check ./*.tar.sha256)
 python3 - "$tmp/release/$IMAGE_ARCHIVE_STEM.metadata.json" <<'PY'
