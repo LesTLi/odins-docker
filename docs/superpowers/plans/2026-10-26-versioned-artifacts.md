@@ -29,17 +29,17 @@
 
 ## 1. Версии и provenance
 
-- [ ] Добавить tests/test-versioning.sh и шаг Check; получить RED в Actions.
-- [ ] Реализовать scripts/image-metadata.sh, IMAGE_VERSION в versions.env,
+- [x] Добавить tests/test-versioning.sh и шаг Check; получить RED в Actions.
+- [x] Реализовать scripts/image-metadata.sh, IMAGE_VERSION в versions.env,
   параметры build.sh и OCI/custom labels обоих Dockerfile.
-- [ ] Проверить stable SemVer, формат/платформу, Git SHA, release mismatch,
+- [x] Проверить stable SemVer, формат/платформу, Git SHA, release mismatch,
   run ID/attempt, отсутствие короткого тега у веток и rerun.
 
 ## 2. Экспорт и Actions
 
-- [ ] scripts/export-image.sh: inspect/validate labels, tag, save,
+- [x] scripts/export-image.sh: inspect/validate labels, tag, save,
   SHA256 и JSON, удалить выходные теги, load, сравнить image ID и labels.
-- [ ] Добавить безопасный upload-artifact с уникальными именами и retention 1 день;
+- [x] Добавить безопасный upload-artifact с уникальными именами и retention 1 день;
   trigger Git-тегов v*, ручной запуск и текущие push сохраняются.
 - [ ] Выполнить полную матрицу, проверить четыре артефакта и roundtrip.
 - [ ] Обновить README/PROJECT/CHANGELOG/spec и PR; финальное ревью.

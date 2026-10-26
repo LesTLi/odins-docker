@@ -8,6 +8,7 @@ cleanup() {
   sudo rm -rf "$tmp"
 }
 trap cleanup EXIT
+trap 'status=$?; printf "Smoke failed at line %s (exit %s)\n" "$LINENO" "$status" >&2; exit "$status"' ERR
 docker run --rm "$tag" bash -ec 'test "$(id -u)" != 0; test -w "$HOME"'
 [[ $(printf 'stdin value\n' | docker run --rm -i "$tag" cat) == 'stdin value' ]]
 for identity in 10001:10001 23456:23457; do
@@ -58,13 +59,14 @@ docker run --rm "$tag" bash -c 'exit 42' || status=$?
 container=$(docker run -d "$tag" bash -c 'trap "echo TERM_HANDLED; exit 0" TERM; echo CHILD_READY; while :; do sleep 1; done')
 ready=false
 for ((attempt=0; attempt<100; attempt++)); do
-  if docker logs "$container" 2>&1 | grep -q CHILD_READY; then ready=true; break; fi
+  if docker logs "$container" >"$tmp/container.log" 2>&1 && grep -q CHILD_READY "$tmp/container.log"; then ready=true; break; fi
   [[ $(docker inspect -f '{{.State.Running}}' "$container") == true ]] || break
   sleep 0.2
 done
 $ready || { docker logs "$container"; echo 'Child did not start' >&2; exit 1; }
 docker stop --time 10 "$container" >/dev/null
-docker logs "$container" 2>&1 | grep -q TERM_HANDLED
+docker logs "$container" >"$tmp/container.log" 2>&1
+grep -q TERM_HANDLED "$tmp/container.log"
 status=$(docker inspect -f '{{.State.ExitCode}}' "$container")
 [[ $status == 0 || $status == 143 ]]
 echo "PASS: $tag ($mode)"
