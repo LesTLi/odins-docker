@@ -15,6 +15,11 @@ OneScript, Java 17, Xvfb. Версии инструментов закрепля
 **Spec:** `docs/superpowers/specs/2026-10-23-docker-images-design.md`.
 Также прочитать `docs/installation-notes.md` и `docs/PROJECT.md`.
 
+Это исходный согласованный план. Фактическое выполнение, уточнения
+интерфейсов и результаты CI ведутся в docs/implementation-progress.md;
+актуальный статус — docs/PROJECT.md. Проверка перед merge выполняется
+через push рабочей ветки; ручной запуск станет доступен после merge в main.
+
 ## Global Constraints
 
 - Платформа 8.3.27.2130; Linux amd64; образы onec-test и server.
