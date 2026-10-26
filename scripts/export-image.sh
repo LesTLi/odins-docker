@@ -83,6 +83,7 @@ if [[ -n ${GITHUB_OUTPUT:-} ]]; then
   printf 'artifact_name=%s\nartifact_path=%s\n' "$IMAGE_ARCHIVE_STEM" "$output" >> "$GITHUB_OUTPUT"
 fi
 printf 'PASS: TAR save/load identity and labels: %s\n' "$IMAGE_BUILD_TAG"
-# shellcheck disable=SC2016 -- Markdown backticks are literal formatting.
+# Markdown backticks are literal formatting.
+# shellcheck disable=SC2016
 printf '\n### Downloadable image\nTag: `%s`\nArchive: `%s.tar`\nSHA256 and metadata JSON included. Save/load verified.\n' \
   "$IMAGE_BUILD_TAG" "$IMAGE_ARCHIVE_STEM" >> "$GITHUB_STEP_SUMMARY"
