@@ -55,6 +55,11 @@ jobs:
         image: [server, onec-test]
         format: [deb, run]
     steps:
+      - name: Reserve disk space for platform images
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
+          df -h /
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false

@@ -21,7 +21,7 @@ python3 "$(dirname "$0")/extract.py" "$input" "$tmp/unpacked"
 if [[ $format == run ]]; then
   mapfile -d '' files < <(find "$tmp/unpacked" -type f -name "setup-full-$version-x86_64.run" -print0)
   [[ ${#files[@]} == 1 ]] || die 'expected exactly one matching full RUN installer'
-  cp "${files[0]}" "$tmp/selected/"
+  mv "${files[0]}" "$tmp/selected/"
 else
   components=(common server)
   [[ $image != onec-test ]] || components+=(client)
@@ -35,7 +35,7 @@ else
       selected+=("$file")
     done < <(find "$tmp/unpacked" -type f -name '*.deb' -print0)
     [[ ${#selected[@]} == 1 ]] || die "expected exactly one $component package for $version"
-    cp "${selected[0]}" "$tmp/selected/"
+    mv "${selected[0]}" "$tmp/selected/"
   done
 fi
-cp "$tmp/selected/"* "$output/"
+mv "$tmp/selected/"* "$output/"

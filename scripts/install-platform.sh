@@ -15,6 +15,7 @@ else
   chmod 700 /tmp/setup.run
   components=server,ru
   [[ $image != onec-test ]] || components=server,client_full,client_thin_fib,ru
+  /tmp/setup.run --help
   /tmp/setup.run --mode unattended --enable-components "$components"
   rm /tmp/setup.run
 fi
