@@ -34,13 +34,13 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 COPY scripts/ /build/scripts/
 COPY versions.env /build/versions.env
 RUN bash /build/scripts/install-deps.sh common \
-    && groupadd --gid 10001 onec \
-    && useradd --uid 10001 --gid 10001 --create-home --shell /bin/bash onec \
-    && mkdir /workspace && chown onec:onec /workspace
+    && groupadd --gid 10001 grp1cv8 \
+    && useradd --uid 10001 --gid 10001 --create-home --shell /bin/bash usr1cv8 \
+    && mkdir /workspace && chown usr1cv8:grp1cv8 /workspace
 COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/onec-entrypoint
 COPY --chmod=755 scripts/configure-runtime.sh /usr/local/bin/configure-onec-runtime
 ENV LANG=ru_RU.UTF-8 LC_ALL=ru_RU.UTF-8 TZ=Asia/Novosibirsk \
-    HOME=/home/onec ONEC_IMAGE=server
+    HOME=/home/usr1cv8 ONEC_IMAGE=server
 WORKDIR /workspace
 ENTRYPOINT ["/usr/bin/tini", "-g", "--", "/usr/local/bin/onec-entrypoint"]
 USER 10001:10001
