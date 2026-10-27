@@ -23,12 +23,13 @@
    `ONEC_USERNAME` и `ONEC_PASSWORD` учётной записи с доступом к релизу 1С.
 2. Workflow **Check** проверяет Bash, входные дистрибутивы, Dockerfile и YAML.
 3. **Build and test** сначала собирает зависимости без платформы и проверяет
-   non-root запуск. Затем собирает оба образа в форматах DEB и RUN,
-   проверяя download и local на runner.
+   non-root запуск. Для push ветки собирает DEB/RUN, для push Git-тега —
+   только DEB, вручную — выбранный формат. Везде проверяются download и local.
 4. Сборка запускается при push в main, рабочую ветку feat/images-actions
-   и Git-теги вида v1.0.0.
+   и Git-теги вида v1.0.
    После появления workflow в main доступен Actions → Build and test →
-   Run workflow с необязательным переопределением версии платформы.
+   Run workflow с необязательным переопределением версии платформы и выбором
+   install_format=deb|run (по умолчанию deb).
 
 Отсутствующие secrets приводят к ошибке, а не к успешному пропуску сборки.
 После проверок каждое задание сохраняет один итоговый образ в **Artifacts**:
@@ -36,16 +37,23 @@ TAR, контрольную сумму SHA256 и metadata JSON. Хранение
 Архив перед загрузкой проверяется через docker load с сопоставлением image ID
 и labels. Registry в этом workflow не используется.
 
+Если upload завершается с Artifact storage quota has been hit, освободите
+хранилище или проверьте лимит Actions в GitHub Billing. Удаление artifacts
+может не сразу снять блокировку: по документации upload-artifact storage
+пересчитывается раз в 6–12 часов. После обновления квоты используйте Re-run
+failed jobs; сборка намеренно не считается успешной без загрузки TAR.
+
 ## Скачать образ и загрузить на сервер
 
 1. Откройте успешный запуск **Build and test** → **Artifacts**.
-2. Выберите onec-test или server и формат run/deb; скачайте ZIP и распакуйте.
+2. Выберите onec-test или onec-server; скачайте ZIP и распакуйте. У сборки
+   для разработки формат run/deb есть в имени, у выпуска — в metadata JSON.
 3. В каталоге распакованного артефакта проверьте SHA256 и загрузите TAR.
    Пример имени (номер запуска будет вашим):
 
 ```bash
-sha256sum --check onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar.sha256
-docker load --input onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar
+sha256sum --check onec-test_1.0-1c8.3.27.2130-run-b123456_linux-amd64.tar.sha256
+docker load --input onec-test_1.0-1c8.3.27.2130-run-b123456_linux-amd64.tar
 ```
 
 Точный тег указан в Actions Summary, metadata JSON и выводе docker load.
@@ -55,10 +63,11 @@ docker load --input onec-test_1.0.0-1c8.3.27.2130-run-b123456-a1_linux-amd64.tar
 
 ## Версии и выпуск
 
-`IMAGE_VERSION=1.0.0` в versions.env — версия проекта, независимая от
+`IMAGE_VERSION=1.0` в versions.env — версия проекта, независимая от
 `ONEC_VERSION=8.3.27.2130`. Уникальный тег сборки:
-`onec-test:1.0.0-1c8.3.27.2130-run-b123456-a1`.
-`b` — run ID, `a` — attempt. Ветки и rerun получают только этот тег.
+`onec-test:1.0-1c8.3.27.2130-run-b123456`.
+`b` — run ID. Повторная попытка имеет тот же тег и заменяет artifact этого
+запуска; attempt, image ID и SHA256 сохраняются в metadata JSON.
 
 Версия 1С по умолчанию во всех запусках скрипта сборки берётся из
 `ONEC_VERSION` в versions.env. Необязательное поле version ручного запуска
@@ -66,10 +75,14 @@ Actions переопределяет её только для этого зап�
 значение файла. Изменение versions.env действует и на автоматические сборки.
 
 Для выпуска измените IMAGE_VERSION, внесите изменения в main и создайте
-соответствующий Git-тег vX.Y.Z. Несовпадение Git-тега и IMAGE_VERSION — ошибка.
-В первой попытке push Git-тега к уже проверенному образу добавляется также
-релизный alias, например `onec-test:1.0.0-1c8.3.27.2130-run`.
-Он сохраняется в том же TAR без пересборки. Выпущенные Git-теги не переносите;
+соответствующий Git-тег vX.Y (например v1.0). Несовпадение Git-тега и
+IMAGE_VERSION — ошибка. Автоматический выпуск использует DEB; к проверенному
+образу добавляется итоговый тег onec-test:1.0-1c8.3.27.2130 или
+onec-server:1.0-1c8.3.27.2130. Ручной запуск на Git-теге также выпускает
+итоговый образ с выбором DEB/RUN; на ветке — разработческий.
+Итоговый тег сохраняется в том же TAR без пересборки; имя релизного TAR
+не содержит формат/номер запуска. Версия проекта — два числа: 1.0, 1.1, 2.0.
+Выпущенные Git-теги не переносите;
 новая версия выпуска требует нового номера. Подробнее: [versioning.md](docs/versioning.md).
 
 В артефакте также есть size-report.txt: фактический размер Docker image,
@@ -114,8 +127,8 @@ DIST_SOURCE=download INSTALL_FORMAT=run bash scripts/build.sh onec-test
 
 ```bash
 # Используйте свои теги из metadata JSON; здесь приведены примеры.
-SERVER_IMAGE=onec-server:1.0.0-1c8.3.27.2130-deb-b123456-a1
-TEST_IMAGE=onec-test:1.0.0-1c8.3.27.2130-run-b123456-a1
+SERVER_IMAGE=onec-server:1.0-1c8.3.27.2130-deb-b123456
+TEST_IMAGE=onec-test:1.0-1c8.3.27.2130-run-b123456
 docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,src=$PWD,dst=/workspace" \
   "$SERVER_IMAGE" ibcmd --help
