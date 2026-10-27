@@ -4,7 +4,12 @@
 
 - Запрошено переименование стандартного пользователя в usr1cv8 и группы
   в grp1cv8 для обоих образов. Сохраняются UID/GID 10001:10001,
-  HOME станет /home/usr1cv8. Проверки имён/HOME добавлены в smoke.
+  HOME изменён на /home/usr1cv8. Проверки имён/HOME добавлены в smoke.
+  Реализация 0cb04ae; RED 40488308886, Check 40488621353 GREEN.
+  Полная сборка 40488616321 на 0cb04ae GREEN: оба tools/non-root,
+  четыре DEB-сборки/smoke (download/local), два save/load и оба upload TAR.
+  Имена/UID/GID/HOME проверены также после установки платформы;
+  произвольный UID/GID Jenkins и владельцы файлов workspace сохранены.
 
 - Владелец выбрал ONEC_USE_HW_LICENSES=0|1, default 0. Реализация 700a3c6
   формирует пользовательский UTF-16LE cfg без root и с сохранением остальных

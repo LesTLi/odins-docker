@@ -56,7 +56,12 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 Согласовано 2026-10-27: в обоих образах стандартный пользователь usr1cv8,
 группа grp1cv8 вместо onec/onec. UID/GID 10001:10001 сохраняются,
 HOME меняется на /home/usr1cv8. Добавлена проверка реальных имён,
-UID/GID и HOME в существующий smoke; реализация и проверки выполняются.
+UID/GID и HOME в существующий smoke. Реализация 0cb04ae; RED
+40488308886 (server tools, прежнее имя); Check 40488621353 GREEN.
+Полная сборка 40488616321 на 0cb04ae GREEN: оба tools/non-root,
+четыре DEB-сборки/smoke (download/local), два save/load и оба upload TAR.
+Проверены имена, UID/GID и HOME до и после установки 1С, произвольный
+UID/GID Jenkins и владельцы файлов workspace. Теги с b40488616321.
 Синтетические записи nss_wrapper для произвольного UID — отдельный механизм.
 
 Новое требование 2026-10-27 реализуется через ONEC_USE_HW_LICENSES=0|1,
