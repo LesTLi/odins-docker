@@ -18,13 +18,34 @@ on:
         default: ''
         required: false
         type: string
+      install_format:
+        description: '1C installation format'
+        default: deb
+        required: true
+        type: choice
+        options: [deb, run]
 permissions:
   contents: read
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
 jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      formats: ${{ steps.plan.outputs.formats }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - id: plan
+        env:
+          ONEC_VERSION: ${{ inputs.version }}
+          INSTALL_FORMAT: ${{ inputs.install_format }}
+        run: bash scripts/ci-plan.sh
   tools:
+    needs: plan
     name: Tools / ${{ matrix.image }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -47,14 +68,14 @@ jobs:
         run: bash tests/smoke.sh "tools:$IMAGE" "$IMAGE" tools
   images:
     name: Platform / ${{ matrix.image }} / ${{ matrix.format }}
-    needs: tools
+    needs: [plan, tools]
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
         image: [server, onec-test]
-        format: [deb, run]
+        format: ${{ fromJSON(needs.plan.outputs.formats) }}
     steps:
       - name: Reserve disk space for platform images
         run: |
@@ -82,4 +103,4 @@ jobs:
           if-no-files-found: error
           retention-days: 1
           compression-level: 0
-          overwrite: false
+          overwrite: true

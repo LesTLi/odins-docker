@@ -49,7 +49,7 @@ CMD ["bash"]
 
 FROM tools AS runtime
 USER root
-ARG IMAGE_VERSION=1.0.0
+ARG IMAGE_VERSION=1.0
 ARG ONEC_VERSION=8.3.27.2130
 ARG INSTALL_FORMAT=deb
 RUN --mount=type=bind,from=distribution,source=/distribution,target=/distribution \

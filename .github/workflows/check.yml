@@ -16,10 +16,14 @@ jobs:
         run: bash tests/test-inputs.sh
       - name: Versioning behavior
         run: bash tests/test-versioning.sh
+      - name: Build event and format selection
+        run: bash tests/test-ci-plan.sh
       - name: Export guard behavior
         run: bash tests/test-export.sh
       - name: Release archive roundtrip
-        run: bash tests/test-release-export.sh
+        run: |
+          bash tests/test-release-export.sh
+          bash tests/test-release-export.sh workflow_dispatch run
       - name: Archive behavior
         run: python3 tests/test-extract.py
       - name: Configuration behavior

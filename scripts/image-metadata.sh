@@ -14,8 +14,8 @@ init_image_metadata() {
   [[ $kind == server || $kind == onec-test ]] || { echo 'Invalid image kind' >&2; return 1; }
   repository=onec-test
   [[ $kind != server ]] || repository=onec-server
-  [[ $IMAGE_VERSION =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
-    echo 'IMAGE_VERSION must be a stable MAJOR.MINOR.PATCH version' >&2; return 1;
+  [[ $IMAGE_VERSION =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || {
+    echo 'IMAGE_VERSION must use MAJOR.MINOR without leading zeros' >&2; return 1;
   }
   [[ $ONEC_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Invalid ONEC_VERSION' >&2; return 1; }
   [[ $format == deb || $format == run ]] || { echo 'Invalid INSTALL_FORMAT' >&2; return 1; }
@@ -28,7 +28,7 @@ init_image_metadata() {
     [[ ${GITHUB_RUN_ID:-} =~ ^[1-9][0-9]*$ && ${GITHUB_RUN_ATTEMPT:-} =~ ^[1-9][0-9]*$ ]] || {
       echo 'Actions requires valid run ID and attempt' >&2; return 1;
     }
-    suffix="b$GITHUB_RUN_ID-a$GITHUB_RUN_ATTEMPT"
+    suffix="b$GITHUB_RUN_ID"
   else
     suffix="local-$(date -u +%Y%m%d%H%M%S)-$RANDOM"
   fi
@@ -37,12 +37,19 @@ init_image_metadata() {
     [[ ${GITHUB_REF:-} == "refs/tags/v$IMAGE_VERSION" ]] || {
       echo 'Git release tag must match IMAGE_VERSION' >&2; return 1;
     }
-    # Reruns/manual runs get a new build tag, never a replacement release alias.
-    if [[ ${GITHUB_ACTIONS:-} == true && ${GITHUB_EVENT_NAME:-} == push && $GITHUB_RUN_ATTEMPT == 1 ]]; then
-      IMAGE_RELEASE_TAG="$repository:$IMAGE_VERSION-1c$ONEC_VERSION-$format"
+    if [[ ${GITHUB_ACTIONS:-} == true ]]; then
+      case ${GITHUB_EVENT_NAME:-} in
+        push)
+          [[ $format == deb ]] || { echo 'Automatic releases require DEB' >&2; return 1; }
+          ;;
+        workflow_dispatch) ;;
+        *) echo 'Unsupported release event' >&2; return 1 ;;
+      esac
+      IMAGE_RELEASE_TAG="$repository:$IMAGE_VERSION-1c$ONEC_VERSION"
     fi
   fi
-  IMAGE_ARCHIVE_STEM="${IMAGE_BUILD_TAG/:/_}_linux-amd64"
+  IMAGE_ARCHIVE_STEM=${IMAGE_RELEASE_TAG:-$IMAGE_BUILD_TAG}
+  IMAGE_ARCHIVE_STEM="${IMAGE_ARCHIVE_STEM/:/_}_linux-amd64"
   INSTALL_FORMAT=$format
   export IMAGE_VERSION ONEC_VERSION BASE_IMAGE INSTALL_FORMAT
   export IMAGE_BUILD_TAG IMAGE_RELEASE_TAG IMAGE_ARCHIVE_STEM IMAGE_REVISION IMAGE_SOURCE IMAGE_CREATED
