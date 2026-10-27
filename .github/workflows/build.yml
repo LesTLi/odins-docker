@@ -1,7 +1,7 @@
 name: Build and test
 on:
   push:
-    branches: [main, feat/images-actions]
+    branches: [feat/images-actions]
     tags: ['v[0-9]*']
     paths:
       - 'server/**'
@@ -18,12 +18,6 @@ on:
         default: ''
         required: false
         type: string
-      install_format:
-        description: '1C installation format'
-        default: deb
-        required: true
-        type: choice
-        options: [deb, run]
 permissions:
   contents: read
 concurrency:
@@ -42,7 +36,6 @@ jobs:
       - id: plan
         env:
           ONEC_VERSION: ${{ inputs.version }}
-          INSTALL_FORMAT: ${{ inputs.install_format }}
         run: bash scripts/ci-plan.sh
   tools:
     needs: plan

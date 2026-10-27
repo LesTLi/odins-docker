@@ -28,7 +28,8 @@ reject env GITHUB_REF=refs/tags/v2.0.0 GITHUB_REF_TYPE=tag bash -c 'source scrip
 reject env IMAGE_VERSION=01.0.0 bash -c 'source scripts/image-metadata.sh; init_image_metadata server'
 reject env IMAGE_VERSION=1.0.0 bash -c 'source scripts/image-metadata.sh; init_image_metadata server'
 reject env IMAGE_VERSION=1.01 bash -c 'source scripts/image-metadata.sh; init_image_metadata server'
-reject env GITHUB_REF=refs/tags/v1.0 GITHUB_REF_TYPE=tag INSTALL_FORMAT=run bash -c 'source scripts/image-metadata.sh; init_image_metadata server'
+GITHUB_REF=refs/tags/v1.0 GITHUB_REF_TYPE=tag INSTALL_FORMAT=run init_image_metadata server
+[[ $IMAGE_RELEASE_TAG == onec-server:1.0-1c8.3.27.2130 ]]
 reject env GITHUB_RUN_ATTEMPT=0 bash -c 'source scripts/image-metadata.sh; init_image_metadata server'
 reject env GITHUB_SHA=bad-sha bash -c 'source scripts/image-metadata.sh; init_image_metadata server'
 reject env INSTALL_FORMAT=bad bash -c 'source scripts/image-metadata.sh; init_image_metadata server'
@@ -46,5 +47,9 @@ reject init_image_metadata unknown
   [[ $ONEC_VERSION == 8.3.27.9999 ]]
   ONEC_VERSION=8.3.27.2130 init_image_metadata server
   [[ $ONEC_VERSION == 8.3.27.2130 ]]
+  sed -i 's/^INSTALL_FORMAT=.*/INSTALL_FORMAT=run/' "$metadata_root/versions.env"
+  unset INSTALL_FORMAT
+  init_image_metadata server
+  [[ $INSTALL_FORMAT == run && $IMAGE_BUILD_TAG == *-run-b123456 ]]
 )
 echo 'PASS: versioning, release gates and rerun identity'

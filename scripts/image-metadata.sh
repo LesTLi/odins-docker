@@ -5,12 +5,13 @@ metadata_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 init_image_metadata() {
   local kind=${1:?image} requested_version=${IMAGE_VERSION:-}
   local requested_onec=${ONEC_VERSION:-} requested_base=${BASE_IMAGE:-}
-  local format=${INSTALL_FORMAT:-deb} suffix repository
+  local requested_format=${INSTALL_FORMAT:-} format suffix repository
   # shellcheck source=versions.env
   source "$metadata_root/versions.env"
   IMAGE_VERSION=${requested_version:-$IMAGE_VERSION}
   ONEC_VERSION=${requested_onec:-$ONEC_VERSION}
   BASE_IMAGE=${requested_base:-$BASE_IMAGE}
+  format=${requested_format:-${INSTALL_FORMAT:-}}
   [[ $kind == server || $kind == onec-test ]] || { echo 'Invalid image kind' >&2; return 1; }
   repository=onec-test
   [[ $kind != server ]] || repository=onec-server
@@ -39,10 +40,7 @@ init_image_metadata() {
     }
     if [[ ${GITHUB_ACTIONS:-} == true ]]; then
       case ${GITHUB_EVENT_NAME:-} in
-        push)
-          [[ $format == deb ]] || { echo 'Automatic releases require DEB' >&2; return 1; }
-          ;;
-        workflow_dispatch) ;;
+        push|workflow_dispatch) ;;
         *) echo 'Unsupported release event' >&2; return 1 ;;
       esac
       IMAGE_RELEASE_TAG="$repository:$IMAGE_VERSION-1c$ONEC_VERSION"
