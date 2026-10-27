@@ -7,7 +7,7 @@ export GITHUB_REF=refs/heads/main GITHUB_REF_TYPE=branch GITHUB_EVENT_NAME=push
 # shellcheck source=scripts/image-metadata.sh
 source scripts/image-metadata.sh
 init_image_metadata onec-test
-[[ $IMAGE_BUILD_TAG == onec-test:1.0-1c8.3.27.2130-run-b123456 ]]
+[[ $IMAGE_BUILD_TAG == onec-test:1.0-1c8.3.27.2130-b123456 ]]
 [[ -z $IMAGE_RELEASE_TAG ]]
 [[ $IMAGE_REVISION == "$GITHUB_SHA" ]]
 first=$IMAGE_BUILD_TAG
@@ -50,6 +50,6 @@ reject init_image_metadata unknown
   sed -i 's/^INSTALL_FORMAT=.*/INSTALL_FORMAT=run/' "$metadata_root/versions.env"
   unset INSTALL_FORMAT
   init_image_metadata server
-  [[ $INSTALL_FORMAT == run && $IMAGE_BUILD_TAG == *-run-b123456 ]]
+  [[ $INSTALL_FORMAT == run && $IMAGE_BUILD_TAG == onec-server:1.0-1c8.3.27.2130-b123456 ]]
 )
 echo 'PASS: versioning, release gates and rerun identity'
