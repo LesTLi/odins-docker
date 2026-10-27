@@ -10,6 +10,11 @@ IMAGE_VERSION=1.0 — версия проекта из versions.env: два чи
 1.x → 2.0. ONEC_VERSION=8.3.27.2130 — отдельная версия платформы из файла;
 manual input version позволяет переопределить её на один запуск.
 
+INSTALL_FORMAT=deb в versions.env выбирает единственный формат для обоих
+образов: deb или run. В Actions нет отдельного input выбора формата;
+и разработка, и выпуск используют файл из выбранного commit/ref.
+Прямой вызов scripts/build.sh сохраняет возможность явного env override.
+
 Разработка:
 
 - onec-test:1.0-1c8.3.27.2130-run-b40265588178
@@ -34,26 +39,27 @@ onec-test_1.0-1c8.3.27.2130_linux-amd64.tar. У разработческого T
 
 | Событие | Форматы | Теги |
 | --- | --- | --- |
-| Push файлов сборки в main/feat/images-actions | DEB и RUN | Для разработки |
-| Push Git-тега vX.Y | Только DEB | Для разработки и итоговый |
-| Ручной запуск на ветке | Выбранный DEB/RUN, default DEB | Для разработки |
-| Ручной запуск на Git-теге vX.Y | Выбранный DEB/RUN, default DEB | Для разработки и итоговый |
+| Push файлов сборки в feat/images-actions | Из versions.env | Для разработки |
+| Push изменений в main | Образы 1С не собираются; только Check | — |
+| Push Git-тега vX.Y | Из versions.env | Для разработки и итоговый |
+| Ручной запуск на ветке | Из versions.env | Для разработки |
+| Ручной запуск на Git-теге vX.Y | Из versions.env | Для разработки и итоговый |
 
-Каждый путь проверяет download/local и оба образа: push ветки даёт восемь
-сборок/smoke и четыре TAR; выпуск/ручной запуск — четыре сборки/smoke и два TAR.
+Каждый запуск сборки проверяет download/local и оба образа: четыре
+сборки/smoke и два TAR в выбранном формате.
 После успешных smoke финальные теги назначаются уже проверенному кандидату.
 
 Порядок выпуска: повысить IMAGE_VERSION, проверить ветку в Actions, включить
 изменения в main, затем создать и отправить Git-тег vX.Y. Git-теги и merge
 в этой задаче автоматически не выполняются. Создание тега не создаёт
 GitHub Release. Ручной workflow должен присутствовать в default branch main.
-Для запуска с Git-тега через GitHub CLI: --ref v1.0; input install_format
-задаёт deb/run. Это инструкция, CLI здесь не запускается.
+Для запуска с Git-тега через GitHub CLI: --ref v1.0. Формат читается из
+versions.env на этом теге. Это инструкция, CLI здесь не запускается.
 
-Пример ручного RUN-выпуска с существующего тега после появления workflow в main:
+Пример ручного выпуска с существующего тега после появления workflow в main:
 
 ```bash
-gh workflow run build.yml --repo LesTLi/odins-docker --ref v1.0 -f install_format=run
+gh workflow run build.yml --repo LesTLi/odins-docker --ref v1.0
 ```
 
 ## Повторные попытки и неизменяемость
@@ -64,8 +70,8 @@ GITHUB_RUN_ATTEMPT не входит в тег, но остаётся в JSON. �
 image ID и SHA256 TAR. Новый запуск получает другой b<run-id>.
 
 При изменении состава повышать версию проекта; выпущенные Git-теги не
-переносить. Ручной выбор другого формата может дать другой image ID при
-том же итоговом теге: фактический формат записан в metadata и labels.
+переносить. Изменение INSTALL_FORMAT также меняет состав образа и требует
+новой версии проекта/тега. Формат записан в metadata и labels.
 Теги сами по себе не гарантируют неизменность байтов. Правила immutable
 tags/digest для Harbor будут отдельной задачей интеграции registry.
 
@@ -82,8 +88,19 @@ io.github.lestli.odins-docker.install.format.
 экспортируется local-кандидат. Registry/Harbor, latest, GHCR и GitHub Releases
 не реализуются. Измерения DEB/RUN — [image-sizes.md](image-sizes.md).
 
+## Обсуждение latest, пока не реализовано
+
+latest — дополнительный изменяемый тег того же проверенного image ID,
+отдельная сборка не нужна. Возможное применение: назначать его вместе с
+итоговым тегом явно выбранному актуальному стабильному выпуску; development
+не получает latest. Явное назначение защищает от случайного продвижения
+старого выпуска при rerun. В TAR можно сохранить оба тега, а в будущем
+в Harbor публиковать их для того же образа. Пока добавление latest не
+подтверждено; пользователь запросил объяснение возможной схемы.
+
 ## Первичные источники
 
 - https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow
 - https://github.com/actions/upload-artifact#overwriting-an-artifact
 - https://github.com/opencontainers/image-spec/blob/main/annotations.md
+- https://docs.docker.com/guides/golang/
