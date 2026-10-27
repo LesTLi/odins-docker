@@ -11,7 +11,11 @@ init_image_metadata onec-test
 [[ -z $IMAGE_RELEASE_TAG ]]
 [[ $IMAGE_REVISION == "$GITHUB_SHA" ]]
 first=$IMAGE_BUILD_TAG
-INSTALL_FORMAT=deb init_image_metadata onec-test
+export INSTALL_FORMAT=deb
+init_image_metadata onec-test
+[[ $IMAGE_BUILD_TAG == "$first" && $INSTALL_FORMAT == deb ]]
+export INSTALL_FORMAT=run
+init_image_metadata onec-test
 [[ $IMAGE_BUILD_TAG == "$first" && $INSTALL_FORMAT == run ]]
 GITHUB_RUN_ATTEMPT=2 init_image_metadata onec-test
 [[ $IMAGE_BUILD_TAG == "$first" ]]
