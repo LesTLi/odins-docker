@@ -19,15 +19,16 @@ Appendix 3.6 documents the user file and UTF-16LE format.
 - [x] Add focused runtime helper, invoke after HOME initialization, copy
   into both images. Empty explicit value is invalid; absent means 0.
   Use private temporary files and atomic replacement; report failures.
-- [ ] Extend full runtime smoke tests for default and arbitrary UID,
+- [x] Extend full runtime smoke tests for default and arbitrary UID,
   value 1 and invalid input; run Check and full image builds on Actions.
-- [ ] Document docker/Jenkins usage and precedence; record results.
+- [x] Document docker/Jenkins usage and precedence; record results.
 
 Scope: no license provisioning, registry publication or project release.
 Existing IMAGE_VERSION=1.0 remains the unreleased development version.
 
 Verification ledger: RED 40463676367 (missing helper), Check 40464026640
 GREEN on 69095ef. Fresh read-only review found no issues. Full build
-40464022338 is running; server tools/non-root completed successfully.
+40464022338 GREEN: both tools/non-root, four DEB builds/smoke (download/local),
+two save/load and both TAR uploads passed.
 Tests verify configuration and startup behavior, not acquisition of a
 hardware license in a licensed application session.
