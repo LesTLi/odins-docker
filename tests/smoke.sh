@@ -65,7 +65,10 @@ status=0
 docker run --rm -e ONEC_USE_HW_LICENSES=invalid "$tag" bash -c 'echo UNEXPECTED_COMMAND' >"$tmp/invalid.log" 2>&1 || status=$?
 [[ $status != 0 ]]
 grep -F 'ONEC_USE_HW_LICENSES must be 0 or 1' "$tmp/invalid.log"
-! grep -q UNEXPECTED_COMMAND "$tmp/invalid.log"
+if grep -q UNEXPECTED_COMMAND "$tmp/invalid.log"; then
+  echo 'Command ran despite invalid license configuration' >&2
+  exit 1
+fi
 status=0
 docker run --rm "$tag" bash -c 'exit 42' || status=$?
 [[ $status == 42 ]]
