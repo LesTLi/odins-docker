@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 tmp=$(mktemp -d)
-export IMAGE_VERSION=1.0.0 ONEC_VERSION=8.3.27.2130 INSTALL_FORMAT=run
+export IMAGE_VERSION=1.0 ONEC_VERSION=8.3.27.2130 INSTALL_FORMAT=deb
 export GITHUB_ACTIONS=true GITHUB_RUN_ID=987654 GITHUB_RUN_ATTEMPT=1
 export GITHUB_SHA=0123456789012345678901234567890123456789
-export GITHUB_REF=refs/tags/v1.0.0 GITHUB_REF_TYPE=tag GITHUB_EVENT_NAME=push
+export GITHUB_REF=refs/tags/v1.0 GITHUB_REF_TYPE=tag GITHUB_EVENT_NAME=push
 export GITHUB_OUTPUT="$tmp/outputs" GITHUB_STEP_SUMMARY="$tmp/summary"
 # shellcheck source=scripts/image-metadata.sh
 source scripts/image-metadata.sh
@@ -36,6 +36,7 @@ data = json.load(open(sys.argv[1], encoding="utf-8"))
 assert data["tags"] == [os.environ["IMAGE_BUILD_TAG"], os.environ["IMAGE_RELEASE_TAG"]]
 assert data["run_id"] == "987654" and data["run_attempt"] == 1
 assert data["archive_roundtrip_verified"] is True
-assert data["image_version"] == "1.0.0" and data["onec_version"] == "8.3.27.2130"
+assert data["image_version"] == "1.0" and data["onec_version"] == "8.3.27.2130"
+assert data["tags"][1] == "onec-server:1.0-1c8.3.27.2130"
 PY
 echo 'PASS: release alias and exact build tag survive TAR export/load'
