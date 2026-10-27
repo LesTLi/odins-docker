@@ -28,6 +28,8 @@ jobs:
         run: python3 tests/test-extract.py
       - name: Configuration behavior
         run: bash tests/test-config.sh
+      - name: Runtime license configuration
+        run: bash tests/test-runtime-config.sh
       - name: ShellCheck
         run: shellcheck -x scripts/*.sh scripts/nircmd tests/*.sh
       - name: Dockerfile lint
