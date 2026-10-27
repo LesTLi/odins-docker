@@ -9,7 +9,12 @@ cleanup() {
 }
 trap cleanup EXIT
 trap 'status=$?; printf "Smoke failed at line %s (exit %s)\n" "$LINENO" "$status" >&2; exit "$status"' ERR
-docker run --rm "$tag" bash -ec 'test "$(id -u)" != 0; test -w "$HOME"'
+docker run --rm "$tag" bash -ec '
+  test "$(id -u)" = 10001; test "$(id -g)" = 10001
+  test "$(id -un)" = usr1cv8; test "$(id -gn)" = grp1cv8
+  test "$HOME" = /home/usr1cv8; test -w "$HOME"
+  test "$(getent passwd 10001 | cut -d : -f 6)" = "$HOME"
+'
 [[ $(printf 'stdin value\n' | docker run --rm -i "$tag" cat) == 'stdin value' ]]
 for identity in 10001:10001 23456:23457; do
   for license_value in 0 1; do
