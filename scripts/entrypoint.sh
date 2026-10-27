@@ -19,6 +19,7 @@ fi
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 mkdir -p "$HOME/.1cv8" "$HOME/.1C/1cestart" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME"
+/usr/local/bin/configure-onec-runtime
 if [[ ${ONEC_IMAGE:-server} == onec-test ]]; then
   exec /usr/local/bin/test-entrypoint "$@"
 fi

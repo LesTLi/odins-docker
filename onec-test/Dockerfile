@@ -38,6 +38,7 @@ RUN bash /build/scripts/install-deps.sh ui && bash /build/scripts/install-tools.
     && useradd --uid 10001 --gid 10001 --create-home --shell /bin/bash onec \
     && mkdir /workspace && chown onec:onec /workspace
 COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/onec-entrypoint
+COPY --chmod=755 scripts/configure-runtime.sh /usr/local/bin/configure-onec-runtime
 COPY --chmod=755 scripts/test-entrypoint.sh /usr/local/bin/test-entrypoint
 COPY --chmod=755 scripts/nircmd /usr/local/bin/nircmd
 ENV LANG=ru_RU.UTF-8 LC_ALL=ru_RU.UTF-8 TZ=Asia/Novosibirsk \

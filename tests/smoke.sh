@@ -12,6 +12,14 @@ trap 'status=$?; printf "Smoke failed at line %s (exit %s)\n" "$LINENO" "$status
 docker run --rm "$tag" bash -ec 'test "$(id -u)" != 0; test -w "$HOME"'
 [[ $(printf 'stdin value\n' | docker run --rm -i "$tag" cat) == 'stdin value' ]]
 for identity in 10001:10001 23456:23457; do
+  for license_value in 0 1; do
+    docker run --rm --user "$identity" -e ONEC_USE_HW_LICENSES="$license_value" "$tag" bash -ec '
+      test "$(iconv -f UTF-16 -t UTF-8 "$HOME/.1C/1cestart/1cestart.cfg" | grep -c "^UseHWLicenses=$ONEC_USE_HW_LICENSES$")" = 1
+    '
+  done
+  docker run --rm --user "$identity" "$tag" bash -ec '
+    iconv -f UTF-16 -t UTF-8 "$HOME/.1C/1cestart/1cestart.cfg" | grep -Fx UseHWLicenses=0
+  '
   mkdir -p "$tmp/work space"
   sudo chown "${identity/:/:}" "$tmp/work space"
   docker run --rm --user "$identity" --mount "type=bind,src=$tmp/work space,dst=/workspace" \
@@ -53,6 +61,11 @@ for identity in 10001:10001 23456:23457; do
     '
   fi
 done
+status=0
+docker run --rm -e ONEC_USE_HW_LICENSES=invalid "$tag" bash -c 'echo UNEXPECTED_COMMAND' >"$tmp/invalid.log" 2>&1 || status=$?
+[[ $status != 0 ]]
+grep -F 'ONEC_USE_HW_LICENSES must be 0 or 1' "$tmp/invalid.log"
+! grep -q UNEXPECTED_COMMAND "$tmp/invalid.log"
 status=0
 docker run --rm "$tag" bash -c 'exit 42' || status=$?
 [[ $status == 42 ]]
