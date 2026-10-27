@@ -14,8 +14,9 @@
   save/load release-fixture для auto DEB/manual RUN.
 - 40442969198/c600c90, попытка 1: восемь сборок/smoke и четыре save/load
   прошли, все upload отклонены квотой GitHub Artifacts. Владелец освободил
-  storage, удалив старые artifacts. Повторные server/deb/run также прошли
-  проверки и снова упёрлись в ту же квоту на upload. Доставку TAR нельзя
+  storage, удалив старые artifacts. В попытке 2 снова прошли все восемь
+  сборок/smoke и четыре save/load; все upload отклонены той же квотой.
+  Check документации 40445649207 GREEN. Доставку TAR нельзя
   считать проверенной; после пересчёта GitHub storage повторить failed jobs.
 
 - Владелец отказался от предложенных новых коротких тегов, latest,
