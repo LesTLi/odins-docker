@@ -46,14 +46,14 @@ failed jobs; сборка намеренно не считается успеш�
 ## Скачать образ и загрузить на сервер
 
 1. Откройте успешный запуск **Build and test** → **Artifacts**.
-2. Выберите onec-test или onec-server; скачайте ZIP и распакуйте. У сборки
-   для разработки формат run/deb есть в имени, у выпуска — в metadata JSON.
+2. Выберите onec-test или onec-server; скачайте ZIP и распакуйте. Для
+   разработческой и итоговой сборки формат указан в metadata JSON.
 3. В каталоге распакованного артефакта проверьте SHA256 и загрузите TAR.
    Пример имени (номер запуска будет вашим):
 
 ```bash
-sha256sum --check onec-test_1.0-1c8.3.27.2130-run-b123456_linux-amd64.tar.sha256
-docker load --input onec-test_1.0-1c8.3.27.2130-run-b123456_linux-amd64.tar
+sha256sum --check onec-test_1.0-1c8.3.27.2130-b123456_linux-amd64.tar.sha256
+docker load --input onec-test_1.0-1c8.3.27.2130-b123456_linux-amd64.tar
 ```
 
 Точный тег указан в Actions Summary, metadata JSON и выводе docker load.
@@ -65,7 +65,7 @@ docker load --input onec-test_1.0-1c8.3.27.2130-run-b123456_linux-amd64.tar
 
 `IMAGE_VERSION=1.0` в versions.env — версия проекта, независимая от
 `ONEC_VERSION=8.3.27.2130`. Уникальный тег сборки:
-`onec-test:1.0-1c8.3.27.2130-run-b123456`.
+`onec-test:1.0-1c8.3.27.2130-b123456`.
 `b` — run ID. Повторная попытка имеет тот же тег и заменяет artifact этого
 запуска; attempt, image ID и SHA256 сохраняются в metadata JSON.
 
@@ -132,8 +132,8 @@ DIST_SOURCE=download INSTALL_FORMAT=run bash scripts/build.sh onec-test
 
 ```bash
 # Используйте свои теги из metadata JSON; здесь приведены примеры.
-SERVER_IMAGE=onec-server:1.0-1c8.3.27.2130-deb-b123456
-TEST_IMAGE=onec-test:1.0-1c8.3.27.2130-run-b123456
+SERVER_IMAGE=onec-server:1.0-1c8.3.27.2130-b123456
+TEST_IMAGE=onec-test:1.0-1c8.3.27.2130-b123456
 docker run --rm --user "$(id -u):$(id -g)" \
   --mount "type=bind,src=$PWD,dst=/workspace" \
   "$SERVER_IMAGE" ibcmd --help

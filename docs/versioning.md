@@ -17,8 +17,8 @@ INSTALL_FORMAT=deb в versions.env выбирает единственный ф�
 
 Разработка:
 
-- onec-test:1.0-1c8.3.27.2130-run-b40265588178
-- onec-server:1.0-1c8.3.27.2130-run-b40265588178
+- onec-test:1.0-1c8.3.27.2130-b40265588178
+- onec-server:1.0-1c8.3.27.2130-b40265588178
 
 Выпуск:
 
@@ -29,7 +29,7 @@ INSTALL_FORMAT=deb в versions.env выбирает единственный ф�
 указывают на один проверенный image ID, без пересборки для назначения тега.
 Имя релизного artifact/TAR использует итоговый тег, например
 onec-test_1.0-1c8.3.27.2130_linux-amd64.tar. У разработческого TAR остаются
-формат и номер запуска.
+номер запуска, но не формат установки.
 
 ## Когда собирается выпуск
 
@@ -104,3 +104,7 @@ latest — дополнительный изменяемый тег того ж�
 - https://github.com/actions/upload-artifact#overwriting-an-artifact
 - https://github.com/opencontainers/image-spec/blob/main/annotations.md
 - https://docs.docker.com/guides/golang/
+
+Подробное исследование и порядок работы с latest —
+[releases-and-latest.md](releases-and-latest.md). Это описание вариантов,
+назначение latest и публикация в registry в коде не добавлены.

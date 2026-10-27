@@ -53,6 +53,16 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 
 ## Текущий этап
 
+Последнее изменение 2026-10-27: по запросу владельца формат исключён и из
+разработческого тега: onec-test:1.0-1c8.3.27.2130-b<run-id> (и onec-server).
+INSTALL_FORMAT остаётся в versions.env, labels и metadata JSON. Реализация
+aeb9200, RED 40451217367; тест уточнён в 0469764, Check 40452047407 GREEN
+(включая ShellCheck и реальный save/load тестового образа для DEB/RUN).
+Полная сборка 1С 40451420796 ещё выполняется; tools/non-root прошли.
+По запросу исследованы
+официальные практики Docker/Harbor и подготовлена инструкция latest;
+назначение latest и публикация в registry пока не реализованы.
+
 Последнее уточнение 2026-10-27: INSTALL_FORMAT=deb|run в versions.env
 выбирает один формат для разработки и выпуска обоих образов. Сейчас deb.
 Manual input формата удалён, push в main больше не запускает Build and test
