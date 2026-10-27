@@ -13,10 +13,10 @@ instead of making the global file writable or requiring root.
 Source: https://1c-dn.com/library/tutorials/1c_enterprise_administrator_guide_file_mode_8_3_27/
 Appendix 3.6 documents the user file and UTF-16LE format.
 
-- [ ] Add tests for default/0/1, invalid and empty values, existing UTF-8 and
+- [x] Add tests for default/0/1, invalid and empty values, existing UTF-8 and
   UTF-16LE settings, duplicate keys, repeated startup, read-only file.
   Run in Check on Actions and observe RED before implementation.
-- [ ] Add focused runtime helper, invoke after HOME initialization, copy
+- [x] Add focused runtime helper, invoke after HOME initialization, copy
   into both images. Empty explicit value is invalid; absent means 0.
   Use private temporary files and atomic replacement; report failures.
 - [ ] Extend full runtime smoke tests for default and arbitrary UID,
@@ -25,3 +25,9 @@ Appendix 3.6 documents the user file and UTF-16LE format.
 
 Scope: no license provisioning, registry publication or project release.
 Existing IMAGE_VERSION=1.0 remains the unreleased development version.
+
+Verification ledger: RED 40463676367 (missing helper), Check 40464026640
+GREEN on 69095ef. Fresh read-only review found no issues. Full build
+40464022338 is running; server tools/non-root completed successfully.
+Tests verify configuration and startup behavior, not acquisition of a
+hardware license in a licensed application session.
