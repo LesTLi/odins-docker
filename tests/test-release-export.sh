@@ -38,6 +38,7 @@ assert data["run_id"] == "987654" and data["run_attempt"] == 1
 assert data["archive_roundtrip_verified"] is True
 assert data["image_version"] == "1.0" and data["onec_version"] == "8.3.27.2130"
 assert data["tags"][1] == "onec-server:1.0-1c8.3.27.2130"
+assert data["tags"][0] == "onec-server:1.0-1c8.3.27.2130-b987654"
 assert data["install_format"] == os.environ["INSTALL_FORMAT"]
 PY
 echo 'PASS: release alias and exact build tag survive TAR export/load'

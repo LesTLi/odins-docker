@@ -33,7 +33,7 @@ init_image_metadata() {
   else
     suffix="local-$(date -u +%Y%m%d%H%M%S)-$RANDOM"
   fi
-  IMAGE_BUILD_TAG="$repository:$IMAGE_VERSION-1c$ONEC_VERSION-$format-$suffix"
+  IMAGE_BUILD_TAG="$repository:$IMAGE_VERSION-1c$ONEC_VERSION-$suffix"
   if [[ ${GITHUB_REF:-} == refs/tags/* || ${GITHUB_REF_TYPE:-} == tag ]]; then
     [[ ${GITHUB_REF:-} == "refs/tags/v$IMAGE_VERSION" ]] || {
       echo 'Git release tag must match IMAGE_VERSION' >&2; return 1;
