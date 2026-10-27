@@ -35,4 +35,17 @@ for value in '' 2 true '1;exit 0'; do
   grep -F 'ONEC_USE_HW_LICENSES must be 0 or 1' "$tmp/error"
   [[ $(sha256sum "$cfg") == "$before" ]]
 done
+chmod 444 "$cfg"
+if bash "$helper" >"$tmp/error" 2>&1; then
+  echo 'FAIL: read-only configuration accepted' >&2; exit 1
+fi
+grep -F 'must be a writable regular file' "$tmp/error"
+[[ $(sha256sum "$cfg") == "$before" ]]
+chmod 600 "$cfg"
+mv "$cfg" "$cfg.original"
+ln -s "$cfg.original" "$cfg"
+if bash "$helper" >"$tmp/error" 2>&1; then
+  echo 'FAIL: configuration symlink accepted' >&2; exit 1
+fi
+[[ -L $cfg && $(sha256sum "$cfg.original" | cut -d ' ' -f1) == "${before%% *}" ]]
 echo 'PASS: runtime license configuration preserves settings and validates input'

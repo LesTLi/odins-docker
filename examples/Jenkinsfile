@@ -1,6 +1,8 @@
 pipeline {
     agent { label 'docker-linux' }
     parameters {
+        choice(name: 'ONEC_USE_HW_LICENSES', choices: ['0', '1'],
+               description: 'Поиск аппаратного ключа 1С: 0 — отключён, 1 — включён')
         string(name: 'TEST_IMAGE', defaultValue: '',
                description: 'Точный тег из metadata JSON скачанного TAR; образ загружен в Docker daemon агента')
     }
@@ -10,6 +12,7 @@ pipeline {
                 sh '''
                   test -n "$TEST_IMAGE"
                   docker run --rm --user "$(id -u):$(id -g)" \
+                    -e ONEC_USE_HW_LICENSES="$ONEC_USE_HW_LICENSES" \
                     --mount "type=bind,src=$WORKSPACE,dst=/workspace" \
                     "$TEST_IMAGE" bash -ec 'id; vrunner version; ibcmd --help'
                 '''
