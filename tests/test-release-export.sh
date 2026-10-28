@@ -9,6 +9,7 @@ export GITHUB_OUTPUT="$tmp/outputs" GITHUB_STEP_SUMMARY="$tmp/summary"
 # shellcheck source=scripts/image-metadata.sh
 source scripts/image-metadata.sh
 init_image_metadata server
+[[ $IMAGE_ARCHIVE_STEM == onec-server_1.0-1c8.3.27.2130 ]]
 candidate=odins-fixture:release
 cleanup() {
   docker image rm "$candidate" "$IMAGE_BUILD_TAG" "$IMAGE_RELEASE_TAG" >/dev/null 2>&1 || true
@@ -27,6 +28,11 @@ docker build --network=none --tag "$candidate" \
   --label "io.github.lestli.odins-docker.install.format=$INSTALL_FORMAT" "$tmp/context"
 bash scripts/export-image.sh server "$candidate" "$tmp/release"
 (cd "$tmp/release" && sha256sum --check ./*.tar.sha256)
+grep -Fx 'artifact_name=onec-server_1.0-1c8.3.27.2130' "$GITHUB_OUTPUT"
+[[ $(find "$tmp/release" -maxdepth 1 -type f | wc -l) == 3 ]]
+for extension in tar tar.sha256 metadata.json; do
+  test -s "$tmp/release/onec-server_1.0-1c8.3.27.2130.$extension"
+done
 python3 - "$tmp/release/$IMAGE_ARCHIVE_STEM.metadata.json" <<'PY'
 import json
 import os

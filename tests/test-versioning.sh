@@ -8,6 +8,7 @@ export GITHUB_REF=refs/heads/main GITHUB_REF_TYPE=branch GITHUB_EVENT_NAME=push
 source scripts/image-metadata.sh
 init_image_metadata onec-test
 [[ $IMAGE_BUILD_TAG == onec-test:1.0-1c8.3.27.2130-b123456 ]]
+[[ $IMAGE_ARCHIVE_STEM == onec-test_1.0-1c8.3.27.2130-b123456 ]]
 [[ -z $IMAGE_RELEASE_TAG ]]
 [[ $IMAGE_REVISION == "$GITHUB_SHA" ]]
 first=$IMAGE_BUILD_TAG
