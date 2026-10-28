@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 tag=${1:?image tag} kind=${2:?server or onec-test} mode=${3:-full}
+# shellcheck source=versions.env
+source versions.env
+export EXPECTED_ONESCRIPT_VERSION=$ONESCRIPT_VERSION
 tmp=$(mktemp -d)
 container=''
 cleanup() {
@@ -59,7 +62,9 @@ for identity in 10001:10001 23456:23457; do
       '
     fi
     docker run --rm --user "$identity" "$tag" bash -ec '
-      oscript -version; opm list; vrunner version; java -version
+      oscript -version | tee "$HOME/oscript-version.txt"
+      grep -F "$EXPECTED_ONESCRIPT_VERSION" "$HOME/oscript-version.txt"
+      opm list; vrunner version; java -version
       xdpyinfo >/dev/null
       nircmd savescreenshot "$HOME/screen shot.png"
       test -s "$HOME/screen shot.png"
