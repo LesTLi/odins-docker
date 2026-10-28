@@ -1,15 +1,15 @@
 # Зависимости и выбранные версии
 
 - Базовая ОС: Ubuntu 22.04, единый набор репозиториев. Выбрана для
-  доступности libwebkit2gtk-4.0-37 и Mono, требуемых текущим стеком.
+  доступности libwebkit2gtk-4.0-37 и библиотек текущего стека.
   Это технический выбор для проверки в CI, не заявление о сертификации ОС.
-- OneScript 1.9.4: официальный DEB, SHA256 в versions.env взят из
-  GitHub release asset digest:
-  https://github.com/EvilBeaver/OneScript/releases/tag/v1.9.4.
-  Только стадия downloader использует standalone OneScript 2.2.0:
+- OneScript 2.2.0: официальный standalone Linux x64 ZIP для onec-test
+  и отдельной стадии downloader:
   https://github.com/EvilBeaver/OneScript/releases/tag/v2.2.0.
-  SHA256 взят из release asset digest. Он нужен современным зависимостям
-  YARD (ibcmdrunner требует >=2.0.0) и не попадает в конечный образ.
+  SHA256 точного OneScript-2.2.0-linux-x64.zip взят из GitHub release asset
+  digest. DEB для 2.2.0 в release отсутствует. Mono больше не требуется.
+  ONESCRIPT_VERSION/SHA256 задают runtime onec-test, DOWNLOADER_ONESCRIPT_*
+  независимо задают загрузчик. В конечном onec-server OneScript отсутствует.
 - Vanessa Runner 2.6.1: совместим с OneScript >=1.9.2, сохраняет CLI 2.x.
   Версия 3.x несовместима с прежними командами и требует OneScript 2.x:
   https://github.com/vanessa-opensource/vanessa-runner/releases/tag/v3.0.0.
@@ -23,8 +23,10 @@
   Linux-архивов (upstream issues #40, #46, #77).
   Fluent 0.6.1 переустанавливается с зависимостями: копия из OPM не содержит
   lambdas, что выявил запуск yard --help в Actions 39897790928.
-- OPM обновляется до закреплённого 1.7.1: версия из DEB не понимает
-  метод packagedef ВерсияСреды, используемый Vanessa Runner 2.6.1.
+- OPM обновляется до закреплённого 1.7.1. Исторически обновление было нужно:
+  OPM из DEB OneScript 1.9.4 не понимал метод packagedef ВерсияСреды,
+  используемый Vanessa Runner 2.6.1. Совместимость с OneScript 2.2.0
+  проверяется в текущей сборке Actions.
   Источник: https://github.com/oscript-library/opm/releases/tag/v1.7.1.
   Верхнеуровневые OPM-пакеты закреплены; транзитивные зависимости хаба могут
   меняться. Пока нет полного lock транзитивных пакетов, битовую
@@ -49,7 +51,7 @@ https://github.com/oscript-library/fluent. Явная установка FLUENT_
 
 | Параметр SHA256 | Точный файл текущей версии |
 | --- | --- |
-| ONESCRIPT_SHA256 | onescript-engine_1.9.4_all.deb |
+| ONESCRIPT_SHA256 | OneScript-2.2.0-linux-x64.zip |
 | DOWNLOADER_ONESCRIPT_SHA256 | OneScript-2.2.0-linux-x64.zip |
 | YARD_SHA256 | yard-1.14.0.ospx |
 | ADD_SHA256 | add-6.9.5.ospx |

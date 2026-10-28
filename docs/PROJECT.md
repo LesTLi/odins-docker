@@ -1,6 +1,6 @@
 # Актуальное состояние odins-docker
 
-Обновлено: 2026-10-27 (Asia/Novosibirsk).
+Обновлено: 2026-10-28 (Asia/Novosibirsk).
 
 ## Назначение
 
@@ -52,6 +52,13 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 зависимости в новом.
 
 ## Текущий этап
+
+Запрос 2026-10-28: ONESCRIPT_VERSION=2.2.0 для конечного onec-test.
+SHA256 официального Linux x64 ZIP: 3b3b0a96e141d6758b74cbf492d5e5c11823bfd92318caff1aaa19bd500f1df7,
+проверен по GitHub release asset digest. Старый DEB-установщик требует
+перехода на ZIP: DEB 2.2.0 не опубликован. Загрузчик уже использует 2.2.0.
+OPM/Vanessa Runner/ADD сохраняются; совместимость и сборка проверяются
+в Actions. Результат ещё не подтверждён.
 
 Согласовано 2026-10-27: в обоих образах стандартный пользователь usr1cv8,
 группа grp1cv8 вместо onec/onec. UID/GID 10001:10001 сохраняются,
@@ -144,7 +151,7 @@ TAR/SHA256/JSON в private Actions artifacts с retention 1 день.
 PR подготовлен к рассмотрению;
 merge и публикация образов в registry не выполнялись.
 
-Выбраны Ubuntu 22.04, OneScript 1.9.4, OPM 1.7.1, Vanessa Runner 2.6.1,
+Выбраны Ubuntu 22.04, OneScript 2.2.0 (обновление 2026-10-28), OPM 1.7.1, Vanessa Runner 2.6.1,
 ADD 6.9.5, Java 17. YARD 1.14.0 используется только для скачивания.
 Точные источники и ограничения фиксации — [dependencies.md](dependencies.md).
 Ход реализации и решения — [implementation-progress.md](implementation-progress.md).

@@ -61,7 +61,7 @@ for identity in 10001:10001 23456:23457; do
         grep -Fx "FtsJavaOpts=--add-opens java.base/java.lang=ALL-UNNAMED" /opt/1cv8/conf/conf.cfg
       '
     fi
-    docker run --rm --user "$identity" "$tag" bash -ec '
+    docker run --rm --user "$identity" -e EXPECTED_ONESCRIPT_VERSION "$tag" bash -ec '
       oscript -version | tee "$HOME/oscript-version.txt"
       grep -F "$EXPECTED_ONESCRIPT_VERSION" "$HOME/oscript-version.txt"
       opm list; vrunner version; java -version
