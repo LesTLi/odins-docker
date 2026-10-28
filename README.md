@@ -52,8 +52,8 @@ failed jobs; сборка намеренно не считается успеш�
    Пример имени (номер запуска будет вашим):
 
 ```bash
-sha256sum --check onec-test_1.0-1c8.3.27.2130-b123456_linux-amd64.tar.sha256
-docker load --input onec-test_1.0-1c8.3.27.2130-b123456_linux-amd64.tar
+sha256sum --check onec-test_1.0-1c8.3.27.2130-b123456.tar.sha256
+docker load --input onec-test_1.0-1c8.3.27.2130-b123456.tar
 ```
 
 Точный тег указан в Actions Summary, metadata JSON и выводе docker load.

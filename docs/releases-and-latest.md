@@ -98,8 +98,8 @@ onec — примеры; проект должен быть заранее со�
 Linux shell, из каталога с распакованным artifact:
 
 ```bash
-sha256sum --check onec-test_1.0-1c8.3.27.2130_linux-amd64.tar.sha256
-docker load --input onec-test_1.0-1c8.3.27.2130_linux-amd64.tar
+sha256sum --check onec-test_1.0-1c8.3.27.2130.tar.sha256
+docker load --input onec-test_1.0-1c8.3.27.2130.tar
 docker login harbor.example.com
 docker tag onec-test:1.0-1c8.3.27.2130 harbor.example.com/onec/onec-test:1.0-1c8.3.27.2130
 docker push harbor.example.com/onec/onec-test:1.0-1c8.3.27.2130

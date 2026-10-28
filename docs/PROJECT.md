@@ -53,6 +53,11 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 
 ## Текущий этап
 
+Запрос 2026-10-28: убрать _linux-amd64 из имени Actions artifact/ZIP,
+TAR, .tar.sha256 и .metadata.json. Архитектура образов linux/amd64
+сохраняется; поле platform в JSON остаётся. Меняется только имя доставки.
+Добавлены ожидания новых имён в существующие тесты экспорта; проверки идут.
+
 Сообщение владельца 2026-10-28: vrunner init-dev создаёт базу успешно,
 но GTK пишет dbind-WARNING / AT-SPI: отсутствует org.a11y.Bus.
 Причина: --no-install-recommends оставил AT-SPI-библиотеки без сервиса

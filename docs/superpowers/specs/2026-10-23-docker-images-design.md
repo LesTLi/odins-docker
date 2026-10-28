@@ -246,3 +246,7 @@ OPM 1.7.1, Vanessa Runner 2.6.1 и ADD 6.9.5 пока сохраняются и 
 для D-Bus accessibility org.a11y.Bus. Графические возможности сохраняются,
 stderr приложений не подавляется. Full smoke выполняет vrunner init-dev,
 проверяет создание ИБ и отсутствие AT-SPI-предупреждений/ошибки в логе.
+
+Уточнение 2026-10-28: имена Actions artifact/ZIP, TAR, .tar.sha256 и
+.metadata.json не содержат _linux-amd64. Платформа образов linux/amd64
+сохраняется, в metadata JSON остаётся поле platform.
