@@ -56,7 +56,12 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 Запрос 2026-10-28: убрать _linux-amd64 из имени Actions artifact/ZIP,
 TAR, .tar.sha256 и .metadata.json. Архитектура образов linux/amd64
 сохраняется; поле platform в JSON остаётся. Меняется только имя доставки.
-Добавлены ожидания новых имён в существующие тесты экспорта; проверки идут.
+Реализация 034f484. RED 40672090587; Check 40672241059 GREEN: реальные
+TAR save/load, имена artifact/TAR/SHA256/JSON и ссылки внутри SHA256
+проверены на DEB/RUN fixture. Полная сборка 40672233311 на 034f484 GREEN:
+оба tools/non-root, четыре DEB-сборки/smoke, два save/load и оба upload.
+Реальные artifacts onec-test_1.0-1c8.3.27.2130-b40672233311 и
+onec-server_1.0-1c8.3.27.2130-b40672233311 загружены без суффикса платформы.
 
 Сообщение владельца 2026-10-28: vrunner init-dev создаёт базу успешно,
 но GTK пишет dbind-WARNING / AT-SPI: отсутствует org.a11y.Bus.
