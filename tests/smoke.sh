@@ -66,8 +66,8 @@ for identity in 10001:10001 23456:23457; do
         cat init-dev.log
         test "$status" = 0
         test -s build/ib/1Cv8.1CD
-        if grep -E "AT-SPI:|org[.]a11y[.]Bus|dbind-WARNING" init-dev.log; then
-          echo "Unexpected accessibility bus warning during init-dev" >&2
+        if grep -E "AT-SPI:|org[.]a11y[.]Bus|dbind-WARNING|ОШИБКА[[:space:]]*-" init-dev.log; then
+          echo "Unexpected client error or accessibility bus warning during init-dev" >&2
           exit 1
         fi
       '

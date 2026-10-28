@@ -53,6 +53,15 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 
 ## Текущий этап
 
+Сообщение владельца 2026-10-28: vrunner init-dev создаёт базу успешно,
+но GTK пишет dbind-WARNING / AT-SPI: отсутствует org.a11y.Bus.
+Причина: --no-install-recommends оставил AT-SPI-библиотеки без сервиса
+из at-spi2-core. Добавлен реальный init-dev в full smoke: exit 0, наличие
+build/ib/1Cv8.1CD и отсутствие этого предупреждения для двух UID/GID.
+RED 40667936784 (job 122748362968) воспроизвёл тот же warning при успешном
+создании базы. Исправление: явно установлен at-spi2-core только в UI-части;
+accessibility не отключается, stderr не фильтруется. Проверки выполняются.
+
 Запрос 2026-10-28: ONESCRIPT_VERSION=2.2.0 для конечного onec-test.
 SHA256 официального Linux x64 ZIP: 3b3b0a96e141d6758b74cbf492d5e5c11823bfd92318caff1aaa19bd500f1df7,
 проверен по GitHub release asset digest. Старый DEB-установщик требует
