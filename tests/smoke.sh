@@ -59,6 +59,17 @@ for identity in 10001:10001 23456:23457; do
           ! grep -q "not found" <<< "$dependencies"
         done
         grep -Fx "FtsJavaOpts=--add-opens java.base/java.lang=ALL-UNNAMED" /opt/1cv8/conf/conf.cfg
+        mkdir "$HOME/init-dev-regression"
+        cd "$HOME/init-dev-regression"
+        status=0
+        timeout 120 vrunner init-dev >init-dev.log 2>&1 || status=$?
+        cat init-dev.log
+        test "$status" = 0
+        test -s build/ib/1Cv8.1CD
+        if grep -E "AT-SPI:|org[.]a11y[.]Bus|dbind-WARNING" init-dev.log; then
+          echo "Unexpected accessibility bus warning during init-dev" >&2
+          exit 1
+        fi
       '
     fi
     docker run --rm --user "$identity" -e EXPECTED_ONESCRIPT_VERSION "$tag" bash -ec '
