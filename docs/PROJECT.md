@@ -60,7 +60,11 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 build/ib/1Cv8.1CD и отсутствие этого предупреждения для двух UID/GID.
 RED 40667936784 (job 122748362968) воспроизвёл тот же warning при успешном
 создании базы. Исправление: явно установлен at-spi2-core только в UI-части;
-accessibility не отключается, stderr не фильтруется. Проверки выполняются.
+accessibility не отключается, stderr не фильтруется. Реализация 6c0d0a7,
+Check 40669604990 GREEN. Полная сборка 40669596604 GREEN: оба tools,
+четыре DEB-сборки/smoke, save/load и оба upload TAR. init-dev четыре раза
+создал ИБ без AT-SPI/ОШИБКА в логе (download/local, UID/GID 10001:10001
+и 23456:23457). Исправленный тег: onec-test:1.0-1c8.3.27.2130-b40669596604.
 
 Запрос 2026-10-28: ONESCRIPT_VERSION=2.2.0 для конечного onec-test.
 SHA256 официального Linux x64 ZIP: 3b3b0a96e141d6758b74cbf492d5e5c11823bfd92318caff1aaa19bd500f1df7,

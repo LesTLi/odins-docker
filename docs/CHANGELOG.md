@@ -7,7 +7,10 @@
   код завершения, файл ИБ и проверка отсутствия предупреждения/ошибки.
   RED 40667936784 воспроизвёл warning при успешном создании ИБ.
   В UI-зависимости явно добавлен at-spi2-core: отсутствовавший сервис
-  org.a11y.Bus. Accessibility сохранена, stderr не фильтруется; GREEN ожидается.
+  org.a11y.Bus. Accessibility сохранена, stderr не фильтруется.
+  Check 40669604990 и полная сборка 40669596604 на 6c0d0a7 GREEN:
+  init-dev создал четыре ИБ без warning/ОШИБКА (download/local и два UID/GID).
+  Оба TAR прошли save/load и загружены в Artifacts, теги с b40669596604.
 
 - Запрошено обновление ONESCRIPT_VERSION с 1.9.4 до 2.2.0. Версия и
   SHA256 обновлены парой по официальному Linux x64 ZIP release asset.
