@@ -57,8 +57,14 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 SHA256 официального Linux x64 ZIP: 3b3b0a96e141d6758b74cbf492d5e5c11823bfd92318caff1aaa19bd500f1df7,
 проверен по GitHub release asset digest. Старый DEB-установщик требует
 перехода на ZIP: DEB 2.2.0 не опубликован. Загрузчик уже использует 2.2.0.
-OPM/Vanessa Runner/ADD сохраняются; совместимость и сборка проверяются
-в Actions. Результат ещё не подтверждён.
+OPM/Vanessa Runner/ADD сохраняются. Реализация 4fd6317: единый ZIP-установщик
+с независимыми version/checksum для runtime и downloader, без Mono.
+RED 40657461690 подтвердил HTTP 404 прежнего DEB URL; Check 40657856205 GREEN.
+В 40657846880 оба tools/non-root GREEN: OneScript 2.2.0 и команды OPM/vrunner
+работают с двумя UID/GID. Полная сборка 40657846880 на 4fd6317 GREEN:
+четыре DEB-сборки/smoke (оба образа, download/local), два save/load и оба
+upload TAR. Теги с b40657846880. Проверены версия движка и запуск команд
+инструментов; тестирование пользовательской конфигурации с лицензией отдельно.
 
 Согласовано 2026-10-27: в обоих образах стандартный пользователь usr1cv8,
 группа grp1cv8 вместо onec/onec. UID/GID 10001:10001 сохраняются,
