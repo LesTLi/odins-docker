@@ -250,3 +250,9 @@ stderr приложений не подавляется. Full smoke выполн
 Уточнение 2026-10-28: имена Actions artifact/ZIP, TAR, .tar.sha256 и
 .metadata.json не содержат _linux-amd64. Платформа образов linux/amd64
 сохраняется, в metadata JSON остаётся поле platform.
+
+Уточнение 2026-11-11: конечный onec-test использует OneScript 2.0.2 из
+официального Linux x64 ZIP с закреплённым SHA256. Это сохраняет метод
+`ХешированиеДанных.Очистить()`, нужный `compileepf` в Vanessa Runner 2.6.1
+([Issue #729](https://github.com/vanessa-opensource/vanessa-runner/issues/729)).
+Downloader сохраняет независимую версию OneScript 2.2.0.

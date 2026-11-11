@@ -3,14 +3,16 @@
 - Базовая ОС: Ubuntu 22.04, единый набор репозиториев. Выбрана для
   доступности libwebkit2gtk-4.0-37 и библиотек текущего стека.
   Это технический выбор для проверки в CI, не заявление о сертификации ОС.
-- OneScript 2.2.0: официальный standalone Linux x64 ZIP для onec-test
-  и отдельной стадии downloader:
-  https://github.com/EvilBeaver/OneScript/releases/tag/v2.2.0.
-  SHA256 точного OneScript-2.2.0-linux-x64.zip взят из GitHub release asset
-  digest. DEB для 2.2.0 в release отсутствует. Mono больше не требуется.
-  ONESCRIPT_VERSION/SHA256 задают runtime onec-test, DOWNLOADER_ONESCRIPT_*
-  независимо задают загрузчик. В конечном onec-server OneScript отсутствует.
-- Vanessa Runner 2.6.1: совместим с OneScript >=1.9.2, сохраняет CLI 2.x.
+- OneScript 2.0.2 закреплён для onec-test: Vanessa Runner 2.6.1 вызывает
+  `ХешированиеДанных.Очистить()` при `compileepf`, а начиная с OneScript
+  2.1.0 этого метода нет ([Issue #729](https://github.com/vanessa-opensource/vanessa-runner/issues/729)).
+  В 2.0.2 метод ещё есть. Перед обновлением движка нужно проверить сборку EPF
+  с выбранной версией Vanessa Runner.
+  `ONESCRIPT_URL` указывает на [официальный Linux x64 ZIP](https://oscript.io/downloads/2_0_2/scd-lin/x64);
+  SHA256 рассчитан для скачанного архива и закрепляет его байты.
+  Downloader по-прежнему использует отдельный OneScript 2.2.0 из GitHub Releases.
+  В конечном onec-server OneScript отсутствует.
+- Vanessa Runner 2.6.1 сохраняет CLI 2.x.
   Версия 3.x несовместима с прежними командами и требует OneScript 2.x:
   https://github.com/vanessa-opensource/vanessa-runner/releases/tag/v3.0.0.
 - ADD 6.9.5: https://github.com/vanessa-opensource/add/releases/tag/v6.9.5.
@@ -25,9 +27,8 @@
   lambdas, что выявил запуск yard --help в Actions 39897790928.
 - OPM обновляется до закреплённого 1.7.1. Исторически обновление было нужно:
   OPM из DEB OneScript 1.9.4 не понимал метод packagedef ВерсияСреды,
-  используемый Vanessa Runner 2.6.1. Запуск OPM/Vanessa Runner с OneScript
-  2.2.0 от двух UID/GID проверен в Actions 40657846880; проверка
-  пользовательской конфигурации с лицензией выполняется отдельно.
+  используемый Vanessa Runner 2.6.1. Smoke проверяет вызов `Очистить()`;
+  полный `compileepf` с пользовательской ИБ проверяется отдельно.
   Источник: https://github.com/oscript-library/opm/releases/tag/v1.7.1.
   Верхнеуровневые OPM-пакеты закреплены; транзитивные зависимости хаба могут
   меняться. Пока нет полного lock транзитивных пакетов, битовую
@@ -55,7 +56,7 @@ https://github.com/oscript-library/fluent. Явная установка FLUENT_
 
 | Параметр SHA256 | Точный файл текущей версии |
 | --- | --- |
-| ONESCRIPT_SHA256 | OneScript-2.2.0-linux-x64.zip |
+| ONESCRIPT_SHA256 | OneScript-2.0.2-linux-x64.zip (ONESCRIPT_URL) |
 | DOWNLOADER_ONESCRIPT_SHA256 | OneScript-2.2.0-linux-x64.zip |
 | YARD_SHA256 | yard-1.14.0.ospx |
 | ADD_SHA256 | add-6.9.5.ospx |

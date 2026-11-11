@@ -1,6 +1,6 @@
 # Актуальное состояние odins-docker
 
-Обновлено: 2026-10-28 (Asia/Novosibirsk).
+Обновлено: 2026-11-11 (Asia/Novosibirsk).
 
 ## Назначение
 
@@ -52,6 +52,13 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 зависимости в новом.
 
 ## Текущий этап
+
+2026-11-11: OneScript в onec-test закреплён на 2.0.2. Vanessa Runner 2.6.1
+вызывает `ХешированиеДанных.Очистить()` в compileepf; в OneScript начиная
+с 2.1.0 метод удалён ([Issue #729](https://github.com/vanessa-opensource/vanessa-runner/issues/729)).
+В 2.0.2 метод присутствует; SHA256 рассчитан по официальному ZIP oscript.io.
+Downloader остаётся на 2.2.0. В smoke добавлен вызов метода без подключения
+к пользовательской ИБ. Проверки нового образа в Actions ожидаются.
 
 Запрос 2026-10-28: убрать _linux-amd64 из имени Actions artifact/ZIP,
 TAR, .tar.sha256 и .metadata.json. Архитектура образов linux/amd64
@@ -180,7 +187,7 @@ TAR/SHA256/JSON в private Actions artifacts с retention 1 день.
 PR подготовлен к рассмотрению;
 merge и публикация образов в registry не выполнялись.
 
-Выбраны Ubuntu 22.04, OneScript 2.2.0 (обновление 2026-10-28), OPM 1.7.1, Vanessa Runner 2.6.1,
+Выбраны Ubuntu 22.04, OneScript 2.0.2 (onec-test), OPM 1.7.1, Vanessa Runner 2.6.1,
 ADD 6.9.5, Java 17. YARD 1.14.0 используется только для скачивания.
 Точные источники и ограничения фиксации — [dependencies.md](dependencies.md).
 Ход реализации и решения — [implementation-progress.md](implementation-progress.md).

@@ -1,5 +1,13 @@
 # Журнал проекта
 
+## 2026-11-11
+
+- OneScript в onec-test закреплён на 2.0.2 из-за несовместимости compileepf
+  в Vanessa Runner 2.6.1 с удалением `ХешированиеДанных.Очистить()` начиная
+  с 2.1.0 ([Issue #729](https://github.com/vanessa-opensource/vanessa-runner/issues/729)).
+  URL и SHA256 обновлены по официальному Linux x64 ZIP; downloader остаётся
+  на 2.2.0. Smoke проверяет вызов метода, сборка в Actions ожидается.
+
 ## 2026-10-28
 
 - Запрошено убрать _linux-amd64 из имени Actions artifact/ZIP и файлов

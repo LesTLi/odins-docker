@@ -5,13 +5,13 @@ source /build/versions.env
 export DEBIAN_FRONTEND=noninteractive
 export LANG=C.UTF-8 LC_ALL=C.UTF-8
 apt-get update
-version=$ONESCRIPT_VERSION checksum=$ONESCRIPT_SHA256
+url=$ONESCRIPT_URL checksum=$ONESCRIPT_SHA256
 if [[ ${1:-test} == downloader ]]; then
   version=$DOWNLOADER_ONESCRIPT_VERSION checksum=$DOWNLOADER_ONESCRIPT_SHA256
+  url="https://github.com/EvilBeaver/OneScript/releases/download/v$version/OneScript-$version-linux-x64.zip"
 fi
 apt-get install -y --no-install-recommends ca-certificates curl unzip libicu70 libssl3 libstdc++6 zlib1g
-curl --fail --location --retry 3 --proto '=https' \
-  "https://github.com/EvilBeaver/OneScript/releases/download/v$version/OneScript-$version-linux-x64.zip" -o /tmp/onescript.zip
+curl --fail --location --retry 3 --proto '=https' "$url" -o /tmp/onescript.zip
 echo "$checksum  /tmp/onescript.zip" | sha256sum --check --strict
 mkdir -p /opt/onescript
 unzip -q /tmp/onescript.zip -d /opt/onescript
