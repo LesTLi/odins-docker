@@ -75,7 +75,7 @@ for identity in 10001:10001 23456:23457; do
     docker run --rm --user "$identity" -e EXPECTED_ONESCRIPT_VERSION "$tag" bash -ec '
       oscript -version | tee "$HOME/oscript-version.txt"
       grep -F "$EXPECTED_ONESCRIPT_VERSION" "$HOME/oscript-version.txt"
-      # Vanessa Runner 2.6.1 compileepf calls Hashing.Clear (upstream #729).
+      # Команда compileepf в Vanessa Runner 2.6.1 вызывает ХешированиеДанных.Очистить() (см. задачу #729).
       printf "%s\n" "Хеш = Новый ХешированиеДанных(ХешФункция.SHA256);" "Хеш.Очистить();" > "$HOME/hash-clear.os"
       oscript "$HOME/hash-clear.os"
       opm list; vrunner version; java -version

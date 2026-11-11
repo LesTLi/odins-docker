@@ -25,6 +25,7 @@ https://github.com/firstBitMarksistskaya/onec-docker.
   `DisableUnsafeActionProtection=.*` и `SystemLanguage=RU`.
 - В `/opt/1cv8/common/1cestart.cfg` нужна строка `UseHWLicenses=0`.
 - Владелец попросил постоянно поддерживать актуальные записи по проекту.
+- По возможности писать поясняющие комментарии в коде и конфигурации на русском.
 - Сборку и интеграционные проверки выполнять в GitHub Actions на hosted
   Linux runner: локальный компьютер ограничен в доступе к зависимостям.
   Локальная сборка не является условием приёмки.
