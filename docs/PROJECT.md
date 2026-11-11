@@ -58,7 +58,10 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 с 2.1.0 метод удалён ([Issue #729](https://github.com/vanessa-opensource/vanessa-runner/issues/729)).
 В 2.0.2 метод присутствует; SHA256 рассчитан по официальному ZIP oscript.io.
 Downloader остаётся на 2.2.0. В smoke добавлен вызов метода без подключения
-к пользовательской ИБ. Проверки нового образа в Actions ожидаются.
+к пользовательской ИБ. Реализация 4830717; Check 43001376537 прошёл.
+В Actions 43001368079 оба tools/non-root прошли: подтверждены SHA256,
+OneScript 2.0.2 и вызов метода с двумя UID/GID. Полная сборка с 1С ещё
+выполняется; пользовательский compileepf в Actions не запускался.
 
 Запрос 2026-10-28: убрать _linux-amd64 из имени Actions artifact/ZIP,
 TAR, .tar.sha256 и .metadata.json. Архитектура образов linux/amd64
