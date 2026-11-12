@@ -155,9 +155,16 @@ UID/GID — 10001:10001, HOME — `/home/usr1cv8`. Для Jenkins передав
 каталога базы на хосте. CIFS монтируйте на хосте без nobrl, а в Samba
 не используйте locking=no. Пример pipeline: [examples/Jenkinsfile](examples/Jenkinsfile).
 
-Пример использует docker run для всей команды тестирования. Шаги docker exec
-и Jenkins docker.image(...).inside() не наследуют переменные, установленные
-entrypoint (HOME, NSS, DISPLAY), поэтому напрямую их здесь не используем.
+Для `agent { docker }` используй параметры из примера Jenkinsfile.
+`ONEC_JENKINS_AGENT=1` запускает служебный `cat` Jenkins и поднимает один
+Xvfb на контейнер. Оставь штатный entrypoint и один контейнер на Pipeline.
+Перед первой командой 1С выполни `onec-wait-ready`: команда дождётся
+настройки окружения 1С и готовности дисплея. Следующие шаги могут напрямую
+вызывать `vrunner`. Передавай `ONEC_USE_HW_LICENSES` в аргументах Docker,
+чтобы значение было доступно уже при запуске контейнера. Аргументы
+`HOME`, `NSS_WRAPPER_*` и `LD_PRELOAD` задают общее окружение для
+entrypoint и шагов Jenkins. Обычный `docker run` ждёт готовности Xvfb
+перед запуском переданной команды.
 
 ## Графические тесты
 

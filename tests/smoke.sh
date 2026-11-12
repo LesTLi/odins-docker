@@ -50,6 +50,33 @@ for identity in 10001:10001 23456:23457; do
     '
   fi
   if [[ $kind == onec-test ]]; then
+    # Воспроизводим запуск Docker Pipeline: cat держит контейнер, шаги идут через docker exec.
+    container=$(docker run -td --user "$identity" \
+      -e ONEC_JENKINS_AGENT=1 -e ONEC_USE_HW_LICENSES=1 \
+      -e HOME=/tmp/onec-jenkins \
+      -e NSS_WRAPPER_PASSWD=/tmp/onec-jenkins/passwd \
+      -e NSS_WRAPPER_GROUP=/tmp/onec-jenkins/group \
+      -e LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
+      --mount "type=bind,src=$tmp/work space,dst=/workspace" "$tag" cat)
+    docker exec "$container" onec-wait-ready
+    docker exec "$container" bash -ec '
+      test "$DISPLAY" = :99
+      test -w "$HOME"
+      getent passwd "$(id -u)"
+      getent group "$(id -g)"
+      iconv -f UTF-16 -t UTF-8 "$HOME/.1C/1cestart/1cestart.cfg" | grep -Fx UseHWLicenses=1
+      xdpyinfo >/dev/null
+      touch /workspace/jenkins-owned
+    '
+    docker exec "$container" bash -ec '
+      nircmd savescreenshot "$HOME/jenkins.png"
+      test -s "$HOME/jenkins.png"
+    '
+    [[ $(stat -c '%u:%g' "$tmp/work space/jenkins-owned") == "$identity" ]]
+    sudo rm "$tmp/work space/jenkins-owned"
+    docker stop --time 10 "$container" >/dev/null
+    docker rm "$container" >/dev/null
+    container=''
     if [[ $mode == full ]]; then
       docker run --rm --user "$identity" "$tag" bash -ec '
         for executable in 1cv8 1cv8c; do

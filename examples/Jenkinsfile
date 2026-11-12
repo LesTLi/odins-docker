@@ -1,5 +1,18 @@
 pipeline {
-    agent { label 'docker-linux' }
+    agent {
+        docker {
+            label 'docker-linux'
+            image "${params.TEST_IMAGE}"
+            args """
+                -e ONEC_JENKINS_AGENT=1
+                -e ONEC_USE_HW_LICENSES=${params.ONEC_USE_HW_LICENSES}
+                -e HOME=/tmp/onec-jenkins
+                -e NSS_WRAPPER_PASSWD=/tmp/onec-jenkins/passwd
+                -e NSS_WRAPPER_GROUP=/tmp/onec-jenkins/group
+                -e LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
+            """
+        }
+    }
     parameters {
         choice(name: 'ONEC_USE_HW_LICENSES', choices: ['0', '1'],
                description: 'Поиск аппаратного ключа 1С: 0 — отключён, 1 — включён')
@@ -10,13 +23,12 @@ pipeline {
         stage('Check tools') {
             steps {
                 sh '''
-                  test -n "$TEST_IMAGE"
-                  docker run --rm --user "$(id -u):$(id -g)" \
-                    -e ONEC_USE_HW_LICENSES="$ONEC_USE_HW_LICENSES" \
-                    --mount "type=bind,src=$WORKSPACE,dst=/workspace" \
-                    "$TEST_IMAGE" bash -ec 'id; vrunner version; ibcmd --help'
+                  onec-wait-ready
+                  id
+                  vrunner version
+                  ibcmd --help
                 '''
-                // Добавьте команду тестирования конфигурации в bash -ec выше.
+                // Добавьте команды тестирования в следующие стадии.
             }
         }
     }
