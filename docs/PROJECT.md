@@ -25,6 +25,8 @@ https://github.com/firstBitMarksistskaya/onec-docker.
   `DisableUnsafeActionProtection=.*` и `SystemLanguage=RU`.
 - В `/opt/1cv8/common/1cestart.cfg` нужна строка `UseHWLicenses=0`.
 - Владелец попросил постоянно поддерживать актуальные записи по проекту.
+- 2026-11-12 владелец разрешил отправлять коммиты в рабочую ветку проекта
+  и запускать GitHub Actions без повторного запроса.
 - По возможности писать поясняющие комментарии в коде и конфигурации на русском.
 - Сборку и интеграционные проверки выполнять в GitHub Actions на hosted
   Linux runner: локальный компьютер ограничен в доступе к зависимостям.
@@ -59,9 +61,12 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 получает `DISPLAY` из окружения образа, запускает `cat` сразу и ждёт
 готовности через `onec-wait-ready` перед первой командой 1С. Пример
 Jenkinsfile передаёт HOME, NSS и настройку лицензии при создании контейнера.
-Добавлен smoke с отдельными `docker exec`. Синтаксис изменённых Bash-скриптов
-и `git diff --check` проверены. Сборка в Actions, прогон на Jenkins и
-получение аппаратной лицензии ещё не подтверждены.
+Реализация 26e02ba. Check 43176773827 и Build and test 43176773832 прошли:
+оба tools/non-root, обе DEB-задачи с download/local, smoke и экспорт TAR.
+Smoke подтвердил отдельные `docker exec`, Xvfb, NSS, владельца файлов
+workspace и запись `UseHWLicenses=1` под двумя UID/GID. Артефакт
+`onec-test_1.0-1c8.3.27.2130-b43176773832` загружен. Прогон на Jenkins
+и получение аппаратной лицензии ещё не подтверждены.
 
 2026-11-11: OneScript в onec-test закреплён на 2.0.2. Vanessa Runner 2.6.1
 вызывает `ХешированиеДанных.Очистить()` в compileepf; в OneScript начиная

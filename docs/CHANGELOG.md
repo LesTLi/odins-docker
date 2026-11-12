@@ -5,8 +5,9 @@
 - Добавлен режим Jenkins Docker Pipeline для `onec-test` с одним Xvfb
   на контейнер, явным ожиданием готовности и общим окружением для
   `docker exec`. Обновлены пример Jenkinsfile и smoke для двух UID/GID.
-  Синтаксис Bash и `git diff --check` проверены. Сборка в Actions,
-  прогон на Jenkins и получение аппаратной лицензии ещё не подтверждены.
+  Реализация 26e02ba. Check 43176773827 и Build and test 43176773832
+  прошли: оба tools/non-root, DEB download/local, smoke и экспорт TAR.
+  Прогон на Jenkins и получение аппаратной лицензии ещё не подтверждены.
 
 ## 2026-11-11
 
