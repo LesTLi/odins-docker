@@ -67,6 +67,11 @@ Smoke подтвердил отдельные `docker exec`, Xvfb, NSS, влад
 workspace и запись `UseHWLicenses=1` под двумя UID/GID. Артефакт
 `onec-test_1.0-1c8.3.27.2130-b43176773832` загружен. Прогон на Jenkins
 и получение аппаратной лицензии ещё не подтверждены.
+README описывает оба режима запуска, проверку готовности и настройку VNC.
+В `examples/` есть `JenkinsfileDockerAgent` для `agent { docker }`
+и `JenkinsfileDockerRun` для обычного агента с явным `docker run`.
+Для обоих примеров отключено правило GroovyLint `CompileStatic`.
+Совместная компиляция Groovy и проверка GroovyLint обоих файлов прошли.
 
 2026-11-11: OneScript в onec-test закреплён на 2.0.2. Vanessa Runner 2.6.1
 вызывает `ХешированиеДанных.Очистить()` в compileepf; в OneScript начиная
