@@ -41,9 +41,7 @@ for ((attempt=0; attempt<100; attempt++)); do
 done
 $ready || { echo 'Xvfb readiness timeout' >&2; exit 1; }
 if [[ ${ENABLE_VNC:-0} == 1 ]]; then
-  : "${VNC_PASSWORD_FILE:?Set VNC_PASSWORD_FILE to a mounted x11vnc password file}"
-  [[ -r $VNC_PASSWORD_FILE ]] || exit 1
-  x11vnc -display "$DISPLAY" -rfbauth "$VNC_PASSWORD_FILE" -forever -shared -rfbport 5900 &
+  x11vnc -display "$DISPLAY" -nopw -forever -shared -rfbport 5900 &
   children+=("$!")
 fi
 if [[ $jenkins_agent == 1 ]]; then

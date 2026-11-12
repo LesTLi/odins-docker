@@ -9,12 +9,8 @@ pipeline {
             // Режим 0 по умолчанию рассчитан на обычный docker run:
             // entrypoint готовит окружение и ждёт Xvfb перед командой.
             //
-            // VNC по умолчанию выключен. Создайте пароль на Docker-хосте:
-            // x11vnc -storepasswd /opt/jenkins-agent/shared/vnc/onec-test.passwd
-            // Дайте UID контейнера право чтения и добавьте в строку args:
+            // VNC по умолчанию выключен. Для доступа без пароля добавьте в args:
             //     -e ENABLE_VNC=1
-            //     -e VNC_PASSWORD_FILE=/run/vnc-password
-            //     -v /opt/jenkins-agent/shared/vnc/onec-test.passwd:/run/vnc-password:ro
             //     -p 127.0.0.1:5907:5900
             // Туннель: ssh -N -L 5907:127.0.0.1:5907 user@jenkins-agent
             // Адрес для VNC-клиента: 127.0.0.1:5907.

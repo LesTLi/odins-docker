@@ -112,6 +112,47 @@ for identity in 10001:10001 23456:23457; do
     '
   fi
 done
+if [[ $kind == onec-test ]]; then
+  # Устаревшая переменная с путём к файлу больше не влияет на запуск VNC.
+  container=$(docker run -d --user 23456:23457 -e ENABLE_VNC=1 \
+    -e VNC_PASSWORD_FILE=/nonexistent/vnc-password \
+    -p 127.0.0.1::5900 "$tag" sleep infinity)
+  endpoint=$(docker port "$container" 5900/tcp)
+  # RFB 3.8: сервер должен предложить тип безопасности None (1).
+  if ! python3 - "${endpoint##*:}" <<'PY'
+import socket
+import sys
+import time
+
+for attempt in range(100):
+    try:
+        connection = socket.create_connection(("127.0.0.1", int(sys.argv[1])), timeout=1)
+        with connection, connection.makefile("rb") as stream:
+            if stream.read(12) != b"RFB 003.008\n":
+                raise ConnectionError("VNC did not send the RFB 3.8 banner")
+            connection.sendall(b"RFB 003.008\n")
+            count = stream.read(1)
+            if not count:
+                raise ConnectionError("VNC did not send security types")
+            security_types = stream.read(count[0])
+            if 1 not in security_types:
+                sys.exit(f"VNC did not offer passwordless access: {security_types!r}")
+            connection.sendall(b"\x01")
+            if stream.read(4) != b"\x00" * 4:
+                sys.exit("VNC rejected passwordless access")
+            break
+    except OSError:
+        time.sleep(0.2)
+else:
+    sys.exit("VNC did not become ready")
+PY
+  then
+    docker logs "$container"
+    exit 1
+  fi
+  docker rm -f "$container" >/dev/null
+  container=''
+fi
 status=0
 docker run --rm -e ONEC_USE_HW_LICENSES=invalid "$tag" bash -c 'echo UNEXPECTED_COMMAND' >"$tmp/invalid.log" 2>&1 || status=$?
 [[ $status != 0 ]]

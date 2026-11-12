@@ -14,7 +14,8 @@ pipeline {
             steps {
                 // Entrypoint готовит HOME, NSS и настройки 1С, затем ждёт Xvfb.
                 // Добавьте команды 1С в bash -ec, чтобы они использовали один Xvfb.
-                // Для VNC добавьте параметры из README перед "$TEST_IMAGE".
+                // Для VNC без пароля добавьте перед "$TEST_IMAGE":
+                // -e ENABLE_VNC=1 -p 127.0.0.1:5907:5900
                 sh '''
                     test -n "$TEST_IMAGE"
                     docker run --rm \\
