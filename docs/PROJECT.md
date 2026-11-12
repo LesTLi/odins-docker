@@ -59,7 +59,10 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 2026-11-12: по запросу владельца удалён парольный режим VNC в `onec-test`.
 При `ENABLE_VNC=1` запускается `x11vnc -nopw`, VNC по умолчанию выключен.
 Обновлены README, оба примера Jenkinsfile и smoke с проверкой подключения
-по RFB без пароля. Результаты Actions ещё не подтверждены.
+по RFB без пароля. Реализация 2f1b576. Check 43201470393 и Build and test
+43201470116 прошли: оба tools/non-root, обе DEB-задачи с download/local,
+smoke и экспорт TAR. Подключение без пароля проверено под UID/GID
+23456:23457. Артефакт `onec-test_1.0-1c8.3.27.2130-b43201470116` загружен.
 
 2026-11-12: владелец согласовал один Xvfb на контейнер `onec-test` с
 `agent { docker }`. Реализован режим `ONEC_JENKINS_AGENT=1`: Jenkins
