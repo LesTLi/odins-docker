@@ -15,9 +15,8 @@
 - Vanessa Runner 2.6.1 сохраняет CLI 2.x.
   Версия 3.x несовместима с прежними командами и требует OneScript 2.x:
   https://github.com/vanessa-opensource/vanessa-runner/releases/tag/v3.0.0.
-- ADD 6.9.5: https://github.com/vanessa-opensource/add/releases/tag/v6.9.5.
-  SHA256 закреплён по файлу официального release, скачанному в Actions
-  39896577878; это фиксация полученного файла, не подпись издателя.
+- ADD 6.8.0: https://github.com/vanessa-opensource/add/releases/tag/v6.8.0.
+  SHA256 рассчитан по официальному `add-6.8.0.ospx` и закрепляет его байты.
 - YARD 1.14.0: официальный release автора, SHA256 из GitHub asset digest:
   https://github.com/arkuznetsov/yard/releases/tag/v.1.14.0.
   Используется только в стадии скачивания. Зеркало oscript-library/yard
@@ -60,10 +59,10 @@ https://github.com/oscript-library/fluent. Явная установка FLUENT_
 | ONESCRIPT_SHA256 | OneScript-2.0.2-linux-x64.zip (ONESCRIPT_URL) |
 | DOWNLOADER_ONESCRIPT_SHA256 | OneScript-2.2.0-linux-x64.zip |
 | YARD_SHA256 | yard-1.14.0.ospx |
-| ADD_SHA256 | add-6.9.5.ospx |
+| ADD_SHA256 | add-6.8.0.ospx |
 
 Брать digest точного файла из GitHub release assets API, без префикса
-sha256:. Если digest отсутствует (как у ADD 6.9.5), скачать официальный
+sha256:. Если digest отсутствует (как у ADD 6.8.0), скачать официальный
 файл и вычислить sha256sum в Actions либо Get-FileHash -Algorithm SHA256
 для уже скачанного файла в Windows. Самостоятельный расчёт закрепляет
 полученные байты, но не является независимой проверкой подлинности.
