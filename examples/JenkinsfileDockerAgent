@@ -5,22 +5,19 @@ pipeline {
             label 'docker-linux'
             image "${params.TEST_IMAGE}"
             // Режим 1 для agent { docker }: entrypoint сразу запускает cat,
-            // затем готовит HOME, NSS и настройки 1С и поднимает один Xvfb.
+            // затем готовит HOME и настройки 1С и поднимает один Xvfb.
             // Режим 0 по умолчанию рассчитан на обычный docker run:
             // entrypoint готовит окружение и ждёт Xvfb перед командой.
             //
-            // VNC по умолчанию выключен. Для доступа без пароля добавьте в args:
+            // VNC по умолчанию выключен. Для доступа добавьте в args:
             //     -e ENABLE_VNC=1
-            //     -p 127.0.0.1:5907:5900
-            // Туннель: ssh -N -L 5907:127.0.0.1:5907 user@jenkins-agent
-            // Адрес для VNC-клиента: 127.0.0.1:5907.
+            //     -p 127.0.0.1:5900:5900
+            // Туннель: ssh -N -L 5900:127.0.0.1:5900 user@jenkins-agent
+            // Адрес для VNC-клиента: 127.0.0.1:5900.
             args """
                 -e ONEC_JENKINS_AGENT=1
                 -e ONEC_USE_HW_LICENSES=${params.ONEC_USE_HW_LICENSES}
                 -e HOME=/tmp/onec-jenkins
-                -e NSS_WRAPPER_PASSWD=/tmp/onec-jenkins/passwd
-                -e NSS_WRAPPER_GROUP=/tmp/onec-jenkins/group
-                -e LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
             """
         }
     }
