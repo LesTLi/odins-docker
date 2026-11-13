@@ -87,6 +87,8 @@ for identity in 10001:10001 23456:23457; do
         done
         grep -Fx "FtsJavaOpts=--add-opens java.base/java.lang=ALL-UNNAMED" /opt/1cv8/conf/conf.cfg
       '
+      # Переменные раскрываются в Bash внутри контейнера.
+      # shellcheck disable=SC2016
       init_dev='
         if [[ ${LD_PRELOAD:-} ]]; then
           getent passwd "$(id -u)"
