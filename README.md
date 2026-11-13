@@ -201,6 +201,9 @@ HOME в этом режиме создаётся приватный времен
    Для другого UID пример задаёт `HOME=/tmp/onec-jenkins`, который агент
    может создать внутри контейнера. Значение из Docker `args` видят
    и entrypoint, и шаги `docker exec`.
+   `NSS_WRAPPER_PASSWD` и `NSS_WRAPPER_GROUP` задают пути к файлам учётных
+   записей, а `LD_PRELOAD` подключает их через `libnss_wrapper` в шагах Jenkins.
+   Эти настройки нужны для запуска 1С под UID/GID, отсутствующими в образе.
 3. `test-entrypoint` запускает один Xvfb, ждёт подключения `xdpyinfo`,
    при включённом VNC запускает `x11vnc` и создаёт `$HOME/.onec-ready`.
 4. Перед первой командой 1С выполните `sh 'onec-wait-ready'` **один раз

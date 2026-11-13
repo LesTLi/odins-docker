@@ -5,7 +5,7 @@ pipeline {
             label 'docker-linux'
             image "${params.TEST_IMAGE}"
             // Режим 1 для agent { docker }: entrypoint сразу запускает cat,
-            // затем готовит HOME и настройки 1С и поднимает один Xvfb.
+            // затем готовит HOME, NSS и настройки 1С и поднимает один Xvfb.
             // Режим 0 по умолчанию рассчитан на обычный docker run:
             // entrypoint готовит окружение и ждёт Xvfb перед командой.
             //
@@ -18,6 +18,9 @@ pipeline {
                 -e ONEC_JENKINS_AGENT=1
                 -e ONEC_USE_HW_LICENSES=${params.ONEC_USE_HW_LICENSES}
                 -e HOME=/tmp/onec-jenkins
+                -e NSS_WRAPPER_PASSWD=/tmp/onec-jenkins/passwd
+                -e NSS_WRAPPER_GROUP=/tmp/onec-jenkins/group
+                -e LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so
             """
         }
     }

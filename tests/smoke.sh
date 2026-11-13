@@ -54,19 +54,17 @@ for identity in 10001:10001 23456:23457; do
     container=$(docker run -td --user "$identity" \
       -e ONEC_JENKINS_AGENT=1 -e ONEC_USE_HW_LICENSES=1 \
       -e HOME=/tmp/onec-jenkins \
+      -e NSS_WRAPPER_PASSWD=/tmp/onec-jenkins/passwd \
+      -e NSS_WRAPPER_GROUP=/tmp/onec-jenkins/group \
+      -e LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
       --mount "type=bind,src=$tmp/work space,dst=/workspace" "$tag" cat)
     docker exec "$container" onec-wait-ready
     docker exec "$container" bash -ec '
       test "$DISPLAY" = :99
       test -w "$HOME"
       test "$(id -u):$(id -g)" = "$1"
-      test -z "${LD_PRELOAD:-}"
-      if [[ $1 == 23456:23457 ]]; then
-        if getent passwd "$(id -u)" || getent group "$(id -g)"; then
-          echo "Expected UID/GID without NSS entries" >&2
-          exit 1
-        fi
-      fi
+      getent passwd "$(id -u)"
+      getent group "$(id -g)"
       iconv -f UTF-16 -t UTF-8 "$HOME/.1C/1cestart/1cestart.cfg" | grep -Fx UseHWLicenses=1
       xdpyinfo >/dev/null
       touch /workspace/jenkins-owned
@@ -86,14 +84,6 @@ for identity in 10001:10001 23456:23457; do
           ! grep -q "not found" <<< "$dependencies"
         done
         grep -Fx "FtsJavaOpts=--add-opens java.base/java.lang=ALL-UNNAMED" /opt/1cv8/conf/conf.cfg
-      '
-      # Переменные раскрываются в Bash внутри контейнера.
-      # shellcheck disable=SC2016
-      init_dev='
-        if [[ ${LD_PRELOAD:-} ]]; then
-          getent passwd "$(id -u)"
-          getent group "$(id -g)"
-        fi
         mkdir "$HOME/init-dev-regression"
         cd "$HOME/init-dev-regression"
         status=0
@@ -106,27 +96,6 @@ for identity in 10001:10001 23456:23457; do
           exit 1
         fi
       '
-      without_nss=0
-      docker exec "$container" bash -ec "$init_dev" || without_nss=$?
-      if [[ $identity == 23456:23457 ]]; then
-        # Сохраняем результат первого прогона и повторяем в том же каталоге.
-        docker exec "$container" bash -ec '
-          mv "$HOME/init-dev-regression" "$HOME/init-dev-without-nss"
-          cp /etc/passwd "$HOME/passwd"
-          cp /etc/group "$HOME/group"
-          printf "onec_23456:x:23456:23457:1C user:%s:/bin/bash\n" "$HOME" >> "$HOME/passwd"
-          printf "onec_23457:x:23457:\n" >> "$HOME/group"
-        '
-        with_nss=0
-        docker exec \
-          -e LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
-          -e NSS_WRAPPER_PASSWD=/tmp/onec-jenkins/passwd \
-          -e NSS_WRAPPER_GROUP=/tmp/onec-jenkins/group \
-          "$container" bash -ec "$init_dev" || with_nss=$?
-        printf 'init-dev UID/GID %s: without NSS=%s, with NSS=%s\n' "$identity" "$without_nss" "$with_nss"
-        [[ $with_nss == 0 ]]
-      fi
-      [[ $without_nss == 0 ]]
     fi
     docker stop --time 10 "$container" >/dev/null
     docker rm "$container" >/dev/null

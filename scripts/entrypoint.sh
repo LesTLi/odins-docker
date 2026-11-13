@@ -4,12 +4,14 @@ prepare_runtime() {
   local uid gid identity passwd_file group_file
   uid=$(id -u) gid=$(id -g)
   if [[ ${jenkins_agent:-0} == 1 ]]; then
-    # docker exec видит HOME, заданный при создании контейнера.
+    # docker exec видит HOME и пути NSS, заданные при создании контейнера.
     (umask 077; mkdir -p "$HOME")
     if [[ ! -w $HOME ]]; then
       echo 'Set HOME to a writable directory at container creation' >&2
       exit 1
     fi
+    passwd_file=${NSS_WRAPPER_PASSWD:?Set NSS_WRAPPER_PASSWD at container creation}
+    group_file=${NSS_WRAPPER_GROUP:?Set NSS_WRAPPER_GROUP at container creation}
   else
     if [[ -z ${HOME:-} || ! -d $HOME || ! -w $HOME ]]; then
       HOME=$(mktemp -d /tmp/onec-home.XXXXXXXX)
