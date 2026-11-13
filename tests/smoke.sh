@@ -118,11 +118,11 @@ for identity in 10001:10001 23456:23457; do
           printf "onec_23457:x:23457:\n" >> "$HOME/group"
         '
         with_nss=0
-        docker exec "$container" \
+        docker exec \
           -e LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnss_wrapper.so \
           -e NSS_WRAPPER_PASSWD=/tmp/onec-jenkins/passwd \
           -e NSS_WRAPPER_GROUP=/tmp/onec-jenkins/group \
-          bash -ec "$init_dev" || with_nss=$?
+          "$container" bash -ec "$init_dev" || with_nss=$?
         printf 'init-dev UID/GID %s: without NSS=%s, with NSS=%s\n' "$identity" "$without_nss" "$with_nss"
         [[ $with_nss == 0 ]]
       fi
