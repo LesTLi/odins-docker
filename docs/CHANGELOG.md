@@ -5,6 +5,8 @@
 - Контрольный тест 43362906987 под 23456:23457 в одном контейнере:
   `init-dev` без NSS вернул 1, с NSS вернул 0 и создал ИБ. Возвращена
   настройка NSS в режиме Jenkins, сохранён smoke через `docker exec`.
+  На fbba4cc прошли Check 43364216107 и Build and test 43364216071,
+  включая `init-dev` под обоими UID/GID и публикацию обоих TAR.
 
 - Эксперимент 816e78b проверил режим Jenkins без `nss_wrapper`. В Actions
   43353064577 обе tools-проверки и server прошли. Полный smoke onec-test

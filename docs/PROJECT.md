@@ -60,6 +60,10 @@ vanessa-runner, Java 17, scrot/nircmd, pandoc и сетевые утилиты.
 в одном контейнере под 23456:23457 с одинаковым HOME: без NSS код 1,
 с NSS код 0 и ИБ создана. Поддержка NSS возвращена в Jenkins-режим и пример.
 Полный smoke проверяет создание ИБ через `docker exec` под обоими UID/GID.
+На fbba4cc прошли Check 43364216107 и Build and test 43364216071: tools,
+DEB download/local и экспорт обоих TAR. Опубликован артефакт
+`onec-test_1.0-1c8.3.27.2130-b43364216071`. Пользовательские `loadext`
+и Vanessa с аппаратной лицензией в Actions не проверялись.
 
 2026-11-13: эксперимент 816e78b убрал `nss_wrapper` в режиме Jenkins.
 В Actions 43353064577 обе проверки tools и полная сборка server прошли.
