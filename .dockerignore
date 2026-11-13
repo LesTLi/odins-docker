@@ -1,0 +1,10 @@
+**
+!scripts/
+!scripts/**
+!versions.env
+!distr/
+!distr/**
+!server/
+!server/Dockerfile
+!onec-test/
+!onec-test/Dockerfile

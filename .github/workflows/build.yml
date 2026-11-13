@@ -1,0 +1,99 @@
+name: Build and test
+on:
+  push:
+    branches: [feat/images-actions]
+    tags: ['v[0-9]*']
+    paths:
+      - 'server/**'
+      - 'onec-test/**'
+      - 'scripts/**'
+      - 'tests/smoke.sh'
+      - 'versions.env'
+      - '.dockerignore'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '1C platform override (empty uses versions.env)'
+        default: ''
+        required: false
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      formats: ${{ steps.plan.outputs.formats }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - id: plan
+        env:
+          ONEC_VERSION: ${{ inputs.version }}
+        run: bash scripts/ci-plan.sh
+  tools:
+    needs: plan
+    name: Tools / ${{ matrix.image }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [server, onec-test]
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@v4.4.1
+      - name: Build dependencies without proprietary distribution
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: docker buildx build --load --target tools -f "$IMAGE/Dockerfile" -t "tools:$IMAGE" .
+      - name: Non-root runtime checks
+        env:
+          IMAGE: ${{ matrix.image }}
+        run: bash tests/smoke.sh "tools:$IMAGE" "$IMAGE" tools
+  images:
+    name: Platform / ${{ matrix.image }} / ${{ matrix.format }}
+    needs: [plan, tools]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [server, onec-test]
+        format: ${{ fromJSON(needs.plan.outputs.formats) }}
+    steps:
+      - name: Reserve disk space for platform images
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
+          df -h /
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@v4.4.1
+      - name: Build and test both sources
+        id: package
+        env:
+          ONEC_USERNAME: ${{ secrets.ONEC_USERNAME }}
+          ONEC_PASSWORD: ${{ secrets.ONEC_PASSWORD }}
+          ONEC_VERSION: ${{ inputs.version }}
+          INSTALL_FORMAT: ${{ matrix.format }}
+          IMAGE: ${{ matrix.image }}
+        run: bash scripts/ci-build-test.sh "$IMAGE"
+      - name: Upload verified Docker image TAR
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: ${{ steps.package.outputs.artifact_name }}
+          path: ${{ steps.package.outputs.artifact_path }}
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+          overwrite: true

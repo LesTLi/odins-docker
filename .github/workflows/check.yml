@@ -1,0 +1,43 @@
+name: Check
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Shell syntax
+        run: find scripts tests -name '*.sh' -type f -exec bash -n {} \;
+      - name: Input behavior
+        run: bash tests/test-inputs.sh
+      - name: Versioning behavior
+        run: bash tests/test-versioning.sh
+      - name: Build event and format selection
+        run: bash tests/test-ci-plan.sh
+      - name: Export guard behavior
+        run: bash tests/test-export.sh
+      - name: Release archive roundtrip
+        run: |
+          bash tests/test-release-export.sh
+          bash tests/test-release-export.sh workflow_dispatch run
+      - name: Archive behavior
+        run: python3 tests/test-extract.py
+      - name: Configuration behavior
+        run: bash tests/test-config.sh
+      - name: Runtime license configuration
+        run: bash tests/test-runtime-config.sh
+      - name: ShellCheck
+        run: shellcheck -x scripts/*.sh scripts/nircmd tests/*.sh
+      - name: Dockerfile lint
+        run: |
+          # FROM arguments are tagged via BASE_IMAGE; OS packages track security updates.
+          docker run --rm -i hadolint/hadolint:2.12.0 hadolint --ignore DL3006 --ignore DL3008 - < server/Dockerfile
+          docker run --rm -i hadolint/hadolint:2.12.0 hadolint --ignore DL3006 --ignore DL3008 - < onec-test/Dockerfile
+      - name: Workflow lint
+        run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+          "$(go env GOPATH)/bin/actionlint"

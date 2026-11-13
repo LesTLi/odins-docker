@@ -1,0 +1,9 @@
+distr/*
+!distr/.gitkeep
+.env
+.secrets/
+.superpowers/
+__pycache__/
+artifacts/
+*.tar
+*.tar.sha256

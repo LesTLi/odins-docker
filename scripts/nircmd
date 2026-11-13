@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+[[ $# == 2 && $1 == savescreenshot ]] || { echo 'Usage: nircmd savescreenshot FILE' >&2; exit 2; }
+exec scrot -- "$2"
