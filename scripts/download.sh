@@ -31,7 +31,7 @@ for index in "${!filters[@]}"; do
     status=$?
     printf '1C download failed: image=%s, distribution=%s/%s, exit=%s, elapsed=%ss, HTTP timeout=%ss\n' \
       "$image" "$((index + 1))" "${#filters[@]}" "$status" "$((SECONDS - started))" "$http_timeout" >&2
-    python3 "$(dirname "$0")/download-diagnostic.py" "$tmp/log" >&2
+    python3 "$(dirname "$0")/download-diagnostic.py" "$tmp/log" "$output" >&2
     exit 1
   fi
   python3 "$(dirname "$0")/download-diagnostic.py" "$tmp/log"
