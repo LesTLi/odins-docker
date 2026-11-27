@@ -23,7 +23,7 @@ jobs:
       - name: Release archive roundtrip
         run: |
           bash tests/test-release-export.sh
-          bash tests/test-release-export.sh workflow_dispatch run
+          bash tests/test-release-export.sh workflow_dispatch run onec-test
       - name: Archive behavior
         run: python3 tests/test-extract.py
       - name: Configuration behavior

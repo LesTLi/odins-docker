@@ -257,3 +257,8 @@ stderr приложений не подавляется. Full smoke выполн
 `ХешированиеДанных.Очистить()`, нужный `compileepf` в Vanessa Runner 2.6.1
 ([Issue #729](https://github.com/vanessa-opensource/vanessa-runner/issues/729)).
 Downloader сохраняет независимую версию OneScript 2.2.0.
+
+Уточнение 2026-11-27: TAR выпуска `onec-test` и `onec-server` содержит
+только итоговый тег. TAR разработки содержит тег `b<run-id>`. Поле
+`tags` в `.metadata.json` перечисляет теги архива, номер запуска хранится
+в `run_id`.

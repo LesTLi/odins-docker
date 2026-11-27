@@ -11,7 +11,7 @@ output=$(cd "$output" && pwd)
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 docker image inspect "$input" > "$tmp/inspect.json"
-# Validate the candidate before assigning its final tags or exporting bytes.
+# Проверяем метки кандидата перед назначением тега и экспортом.
 python3 - "$tmp/inspect.json" <<'PY'
 import json
 import os
@@ -31,27 +31,21 @@ for key, value in expected.items():
     assert image["Config"]["Labels"].get(key) == value, f"Incorrect image label: {key}"
 PY
 original_id=$(docker image inspect -f '{{.Id}}' "$input")
-tags=("$IMAGE_BUILD_TAG")
-[[ -z $IMAGE_RELEASE_TAG ]] || tags+=("$IMAGE_RELEASE_TAG")
-for tag in "${tags[@]}"; do
-  if docker image inspect "$tag" >/dev/null 2>&1; then
-    echo 'Refusing to replace an existing final tag' >&2; exit 1
-  fi
-  docker tag "$input" "$tag"
-done
+archive_tag=${IMAGE_RELEASE_TAG:-$IMAGE_BUILD_TAG}
+if docker image inspect "$archive_tag" >/dev/null 2>&1; then
+  echo 'Refusing to replace an existing final tag' >&2; exit 1
+fi
+docker tag "$input" "$archive_tag"
 archive="$output/$IMAGE_ARCHIVE_STEM.tar"
-docker image save --output "$archive.partial" "${tags[@]}"
+docker image save --output "$archive.partial" "$archive_tag"
 mv "$archive.partial" "$archive"
 (cd "$output" && sha256sum "$IMAGE_ARCHIVE_STEM.tar" > "$IMAGE_ARCHIVE_STEM.tar.sha256")
-# Remove the final references, then prove that the archive restores those tags
-# and the exact config/layers identity of the tested candidate.
-docker image rm "${tags[@]}" >/dev/null
+# Удаляем тег перед загрузкой, чтобы проверить его восстановление и ID образа.
+docker image rm "$archive_tag" >/dev/null
 docker image load --input "$archive"
-for tag in "${tags[@]}"; do
-  [[ $(docker image inspect -f '{{.Id}}' "$tag") == "$original_id" ]]
-done
-docker image inspect "$IMAGE_BUILD_TAG" > "$tmp/restored.json"
-python3 - "$tmp/inspect.json" "$tmp/restored.json" "$output/$IMAGE_ARCHIVE_STEM.metadata.json" "$archive.sha256" <<'PY'
+[[ $(docker image inspect -f '{{.Id}}' "$archive_tag") == "$original_id" ]]
+docker image inspect "$archive_tag" > "$tmp/restored.json"
+python3 - "$tmp/inspect.json" "$tmp/restored.json" "$output/$IMAGE_ARCHIVE_STEM.metadata.json" "$archive.sha256" "$archive_tag" <<'PY'
 import json
 import os
 import pathlib
@@ -61,7 +55,7 @@ before, after = [json.load(open(p, encoding="utf-8"))[0] for p in sys.argv[1:3]]
 assert before["Config"]["Labels"] == after["Config"]["Labels"], "Labels changed after load"
 metadata = {
     "schema_version": 1,
-    "tags": [t for t in (os.environ["IMAGE_BUILD_TAG"], os.environ["IMAGE_RELEASE_TAG"]) if t],
+    "tags": [sys.argv[5]],
     "image_version": os.environ["IMAGE_VERSION"],
     "onec_version": os.environ["ONEC_VERSION"],
     "install_format": os.environ["INSTALL_FORMAT"],
@@ -82,8 +76,8 @@ PY
 if [[ -n ${GITHUB_OUTPUT:-} ]]; then
   printf 'artifact_name=%s\nartifact_path=%s\n' "$IMAGE_ARCHIVE_STEM" "$output" >> "$GITHUB_OUTPUT"
 fi
-printf 'PASS: TAR save/load identity and labels: %s\n' "$IMAGE_BUILD_TAG"
-# Markdown backticks are literal formatting.
+printf 'PASS: TAR save/load identity and labels: %s\n' "$archive_tag"
+# Обратные кавычки нужны для разметки Markdown.
 # shellcheck disable=SC2016
 printf '\n### Downloadable image\nTag: `%s`\nArchive: `%s.tar`\nSHA256 and metadata JSON included. Save/load verified.\n' \
-  "$IMAGE_BUILD_TAG" "$IMAGE_ARCHIVE_STEM" >> "$GITHUB_STEP_SUMMARY"
+  "$archive_tag" "$IMAGE_ARCHIVE_STEM" >> "$GITHUB_STEP_SUMMARY"
